@@ -1,0 +1,27 @@
+[
+  {
+    "type": "course_objective",
+    "topic": "Differential Equations",
+    "content": "Students must understand second-order linear differential equations with constant coefficients, specifically damped harmonic oscillators governed by $m\\frac{d^2x}{dt^2} + b\\frac{dx}{dt} + kx = 0$."
+  },
+  {
+    "type": "course_objective",
+    "topic": "Fourier Analysis & Waves",
+    "content": "Mastering the decomposition of periodic waveforms into Fourier series, understanding orthogonality of sinusoidal basis functions, and computing Fourier coefficients $a_n$ and $b_n$."
+  },
+  {
+    "type": "problem_solution",
+    "topic": "Damped Oscillation Solution",
+    "content": "For an underdamped oscillator with $b^2 < 4mk$, the general displacement is given by $x(t) = A e^{-\\gamma t} \\cos(\\omega_d t + \\phi)$, where $\\gamma = \\frac{b}{2m}$ and $\\omega_d = \\sqrt{\\frac{k}{m} - \\gamma^2}$."
+  },
+  {
+    "type": "student_learning_state",
+    "topic": "Common Pitfalls",
+    "content": "Students frequently confuse critically damped ($b^2 = 4mk$) and overdamped ($b^2 > 4mk$) boundary conditions. Emphasis should be placed on calculating damping ratios $\\zeta = \\frac{b}{2\\sqrt{mk}}$."
+  },
+  {
+    "type": "course_objective",
+    "topic": "Multivariable Calculus & Vector Fields",
+    "content": "Calculate line integrals, evaluate conservative vector fields, and verify Stokes' Theorem and Divergence Theorem in $\\mathbb{R}^3$ for fluid flow and electromagnetic field flux."
+  }
+]

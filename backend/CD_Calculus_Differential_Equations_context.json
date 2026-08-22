@@ -1,0 +1,186 @@
+{
+  "metadata": {
+    "course_name": "Calculus and Differential Equations",
+    "course_code": "2301101T",
+    "course_credits": 3,
+    "release_date": "01/09/2023",
+    "revision_no": "2.0",
+    "academic_year": "2023-2024",
+    "teaching_scheme": {
+      "lecture_hours_per_week": 3,
+      "tutorial": null,
+      "IA": 30,
+      "MSE": 20,
+      "ESE": 50,
+      "CA": null,
+      "pract_demo_pres": null,
+      "total": 100
+    },
+    "prerequisite": "NIL",
+    "source_file": "/mnt/data/CDE_Th_07964e271cc3e8d015916a6ef1da5504.pdf"
+  },
+  "course_objectives": [
+    {
+      "code": "2301101T.CEO.1",
+      "text": "To apply the concepts of partial differentiation."
+    },
+    {
+      "code": "2301101T.CEO.2",
+      "text": "Demonstrate an understanding towards the applications of partial differentiation."
+    },
+    {
+      "code": "2301101T.CEO.3",
+      "text": "Examine methods for solving first-order first-degree ordinary differential equations."
+    },
+    {
+      "code": "2301101T.CEO.4",
+      "text": "Infer the applications of first-order differential equations."
+    },
+    {
+      "code": "2301101T.CEO.5",
+      "text": "Determine the solution of linear differential equations of second and higher order."
+    },
+    {
+      "code": "2301101T.CEO.6",
+      "text": "Solve first-order linear and nonlinear partial differential equations."
+    }
+  ],
+  "course_outcomes": [
+    {
+      "code": "2301101T.CO.1",
+      "text": "Make use of properties of partial differentiation to solve the problems [L3]."
+    },
+    {
+      "code": "2301101T.CO.2",
+      "text": "Examine the applications of partial differentiation [L4]."
+    },
+    {
+      "code": "2301101T.CO.3",
+      "text": "Solve first-order and first-degree ordinary differential equations [L3]."
+    },
+    {
+      "code": "2301101T.CO.4",
+      "text": "Analyze real-world phenomenon governed by first-order ordinary differential equations [L4]."
+    },
+    {
+      "code": "2301101T.CO.5",
+      "text": "Apply concepts of solving linear differential equations of second and higher order governing different systems in engineering [L4]."
+    },
+    {
+      "code": "2301101T.CO.6",
+      "text": "Determine solutions of various partial differential equations by theoretical methods [L3]."
+    }
+  ],
+  "course_abstract": "The course focuses on developing important mathematical concepts in a comprehensible, coherent and rigorous way. This is achieved by means of a carefully balanced approach by including the topics of calculus and differential equations which will foster the analytical thinking, and problem solving abilities of the students. Students are encouraged to apply their mathematical knowledge to solve problems and clear their doubts through tutorial sessions. Students embarking on this course will be able to identify and solve various differential equation problems and will be intellectually equipped with the links between these concepts and their core engineering and real life problems. This course will enable them to tackle the problems of differential equations that they encounter in other engineering courses.",
+  "units": [
+    {
+      "unit_number": 1,
+      "title": "Partial Differentiation",
+      "hours": 8,
+      "contents": [
+        "Partial Differentiation: Introduction",
+        "Chain rule",
+        "Total derivative",
+        "Change of variables",
+        "Homogeneous functions",
+        "Euler’s theorem",
+        "Differentiation of implicit functions"
+      ],
+      "self_study": "Differentiation of implicit functions",
+      "applications": []
+    },
+    {
+      "unit_number": 2,
+      "title": "Applications Of Partial Differentiation",
+      "hours": 7,
+      "contents": [
+        "Jacobian",
+        "Jacobian of implicit functions",
+        "Partial derivative of an implicit function using Jacobians",
+        "Functional dependence",
+        "Maxima and Minima of functions of two variables"
+      ],
+      "self_study": "Jacobian of implicit functions",
+      "applications": [
+        "Maxima, Minima",
+        "Case studies"
+      ]
+    },
+    {
+      "unit_number": 3,
+      "title": "Ordinary Differential Equations Of First Order And First Degree",
+      "hours": 7,
+      "contents": [
+        "Exact differential equations",
+        "Differential equations reducible to exact form - Integrating factors",
+        "Linear differential equations",
+        "Differential equations reducible to linear form"
+      ],
+      "self_study": "Differential equations reducible to linear form",
+      "applications": []
+    },
+    {
+      "unit_number": 4,
+      "title": "Applications Of Ordinary Differential Equations Of First Order & First Degree",
+      "hours": 7,
+      "contents": [
+        "Orthogonal trajectories",
+        "Newton’s law of cooling",
+        "Growth & Decay",
+        "Electric circuits",
+        "Chemical applications - Mixing problems"
+      ],
+      "self_study": "Newton’s law of cooling, Growth & Decay",
+      "applications": [
+        "Electrical circuits",
+        "Mixing problems",
+        "Newton's law of cooling"
+      ]
+    },
+    {
+      "unit_number": 5,
+      "title": "Linear Differential Equation Of Second Order & Higher Order",
+      "hours": 8,
+      "contents": [
+        "General solutions of linear differential equations with constant coefficients",
+        "Shortcut methods to find P.I.",
+        "Method of variation of parameters",
+        "Equations reducible to linear differential equations with constant coefficients: Cauchy and Legendre’s linear differential equations"
+      ],
+      "self_study": "Cauchy and Legendre’s linear differential equations",
+      "applications": [
+        "Mass-Spring systems"
+      ]
+    },
+    {
+      "unit_number": 6,
+      "title": "Partial Differential Equations",
+      "hours": 8,
+      "contents": [
+        "Introduction and formation of a partial differential equation",
+        "Solution of a partial differential equation",
+        "Equations solvable by direct integration",
+        "Linear differential equations of the first order",
+        "Non-linear differential equations of the first order",
+        "Charpit’s method"
+      ],
+      "self_study": null,
+      "applications": [],
+      "further_readings": [
+        "Linear Homogeneous Partial Differential Equations"
+      ]
+    }
+  ],
+  "text_books": [
+    "Ramana, B. V. (2017). Higher Engineering Mathematics. Tata McGraw-Hill Education.",
+    "Grewal, B. S., & Grewal, J. S. (2018). Higher engineering mathematics. 2002, Khanna Publishers, New Delhi."
+  ],
+  "reference_books": [
+    "Thomas, G. B., Weir, M. D., Hass, J., & Giordano, F. R. (2002). Thomas’ calculus. Addison-Wesley.",
+    "Kreyszig, E. (2015). Advanced Engineering Mathematics 10E All Access Pack. John Wiley & Sons.",
+    "Jain, R. K., & Iyengar, S. R. K. (2002). Advanced Engineering Mathematics, Narosa Pub.",
+    "O’Neil, P. V. (2012). Engineering Mathematics. Foxwell, Birmingham.",
+    "Zill, D. G., & Wright, W. S. (2011). Engineering Mathematics."
+  ],
+  "notes": "This JSON was created from the provided syllabus PDF and is structured for use as context in an LLM-based exam-generation system."
+}
