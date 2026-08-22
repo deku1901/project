@@ -10,7 +10,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "ExaGo — Intelligent Examination Platform",
+  title: "Exagoal — Intelligent Examination Platform",
   description:
     "AI-powered adaptive examination platform for Indian education — curating, validating, and legitimizing assessments through a living Learning State engine.",
 };
@@ -19,7 +19,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <body className={poppins.className}>{children}</body>
     </html>
   );
