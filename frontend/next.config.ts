@@ -1,19 +1,25 @@
 import type { NextConfig } from "next";
 
+const backendUrl = (
+  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.BACKEND_URL ||
+  "http://127.0.0.1:8000"
+).trim().replace(/\/+$/, "");
+
 const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
         source: "/api/:path*",
-        destination: "http://127.0.0.1:8000/api/:path*",
+        destination: `${backendUrl}/api/:path*`,
       },
       {
         source: "/static/:path*",
-        destination: "http://127.0.0.1:8000/static/:path*",
+        destination: `${backendUrl}/static/:path*`,
       },
       {
         source: "/sample_context.json",
-        destination: "http://127.0.0.1:8000/sample_context.json",
+        destination: `${backendUrl}/sample_context.json`,
       },
     ];
   },
