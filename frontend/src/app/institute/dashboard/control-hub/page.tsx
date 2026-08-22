@@ -130,9 +130,13 @@ export default function ControlHubPage() {
         body: JSON.stringify(activeConfig),
       });
       if (res.ok) {
-        setSaveStatus("Configuration saved successfully!");
+        setSaveStatus("Configuration saved & activated across all student models!");
+        if (typeof window !== "undefined") {
+          localStorage.setItem("exagoal_active_blueprint", JSON.stringify(activeConfig));
+          window.dispatchEvent(new Event("blueprint_updated"));
+        }
         fetchConfigs();
-        setTimeout(() => setSaveStatus(null), 3000);
+        setTimeout(() => setSaveStatus(null), 3500);
       } else {
         setSaveStatus(`Error: ${res.error}`);
       }

@@ -48,6 +48,28 @@ export default function LearningStatePage() {
   useEffect(() => {
     // Attempt to fetch active Control Hub blueprint to reflect live difficulty parameters
     async function loadActiveBlueprint() {
+      // 1. First check local storage for instant sync across tabs
+      if (typeof window !== "undefined") {
+        try {
+          const rawLocal = localStorage.getItem("exagoal_active_blueprint");
+          if (rawLocal) {
+            const parsed = JSON.parse(rawLocal);
+            if (parsed && parsed.difficulty) {
+              const matched = DIFFICULTY_PROFILES.find((p) => p.key === parsed.exam_profile);
+              setSelectedDifficulty({
+                key: parsed.exam_profile || "custom",
+                label: matched?.label || "Control Hub Active",
+                name: parsed.name || "Custom Blueprint",
+                diff: parsed.difficulty,
+                desc: `${parsed.difficulty.hard ?? 20}% Hard · Control Hub Synced`,
+              });
+              return;
+            }
+          }
+        } catch {}
+      }
+
+      // 2. Fetch from backend API
       try {
         const base = getApiBaseUrl();
         const res = await safeFetchJson<any[]>(`${base}/api/blueprint/configs`);
@@ -55,20 +77,33 @@ export default function LearningStatePage() {
           const defaultCfg = res.data.find((c) => c.is_default) || res.data[0];
           if (defaultCfg && defaultCfg.difficulty) {
             const matched = DIFFICULTY_PROFILES.find((p) => p.key === defaultCfg.exam_profile);
-            if (matched) {
-              setSelectedDifficulty({
-                ...matched,
-                name: defaultCfg.name || matched.name,
-                diff: defaultCfg.difficulty || matched.diff,
-              });
-            }
+            setSelectedDifficulty({
+              key: defaultCfg.exam_profile || "custom",
+              label: matched?.label || defaultCfg.name,
+              name: defaultCfg.name || matched?.name || "Active Blueprint",
+              diff: defaultCfg.difficulty || matched?.diff || { easy: 30, medium: 50, hard: 20 },
+              desc: `${defaultCfg.difficulty?.hard ?? 20}% Hard · Control Hub Synced`,
+            });
           }
         }
       } catch {
         // Fallback to default
       }
     }
+
     loadActiveBlueprint();
+
+    // Listen for live updates when admin saves in Control Hub
+    if (typeof window !== "undefined") {
+      window.addEventListener("blueprint_updated", loadActiveBlueprint);
+      window.addEventListener("storage", loadActiveBlueprint);
+      const interval = setInterval(loadActiveBlueprint, 4000);
+      return () => {
+        window.removeEventListener("blueprint_updated", loadActiveBlueprint);
+        window.removeEventListener("storage", loadActiveBlueprint);
+        clearInterval(interval);
+      };
+    }
   }, []);
 
   return (

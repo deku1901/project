@@ -60,7 +60,14 @@ def call_openrouter(
     last_error = ""
 
     for target_model in models_to_try:
-        print(f"[ExamGen LLM] Querying model: {target_model}...", flush=True)
+        print(f"\n{'='*70}", flush=True)
+        print(f"[ExamGen LLM INVOCATION] Sending API Request to OpenRouter:", flush=True)
+        print(f"  • Model: {target_model}", flush=True)
+        print(f"  • Temperature (LLM Randomness): {temperature}", flush=True)
+        print(f"  • Top_P (Nucleus Sampling): {top_p if top_p is not None else 'Default'}", flush=True)
+        print(f"  • Max Tokens: {max_tokens}", flush=True)
+        print(f"  • Timeout: {timeout}s", flush=True)
+        print(f"{'='*70}\n", flush=True)
         payload = {
             "model": target_model,
             "messages": messages,

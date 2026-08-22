@@ -724,31 +724,44 @@ async def generate_exam(
     """
     gen_start_time = time.time()
 
-    # ── Load Blueprint Config if provided ──────────────────────────────────
+    # ── Load Blueprint Config if provided (or default active from Control Hub) ──
     bp_config = None
     config_snapshot = {}
-    if blueprint_config_id:
-        with Session(engine) as session:
+    with Session(engine) as session:
+        if blueprint_config_id:
             bp_config = session.get(BlueprintConfig, blueprint_config_id)
-        if bp_config:
-            # Override LLM params from blueprint
-            if bp_config.llm_model and not model:
-                model = bp_config.llm_model
-            config_snapshot = {
-                "id": bp_config.id,
-                "name": bp_config.name,
-                "exam_profile": bp_config.exam_profile,
-                "difficulty": json.loads(bp_config.difficulty_json) if bp_config.difficulty_json else {},
-                "bloom_levels": json.loads(bp_config.bloom_levels_json) if bp_config.bloom_levels_json else [],
-                "question_types": json.loads(bp_config.question_types_json) if bp_config.question_types_json else {},
-                "nep_alignment": json.loads(bp_config.nep_alignment_json) if bp_config.nep_alignment_json else {},
-                "guardrails": json.loads(bp_config.guardrails_json) if bp_config.guardrails_json else {},
-                "llm_temperature": bp_config.llm_temperature,
-                "llm_max_tokens": bp_config.llm_max_tokens,
-                "llm_top_p": bp_config.llm_top_p,
-                "max_diagrams": bp_config.max_diagrams,
-                "time_minutes": bp_config.time_minutes,
-            }
+        if not bp_config:
+            bp_config = session.exec(select(BlueprintConfig).where(BlueprintConfig.is_default == True)).first()
+        if not bp_config:
+            bp_config = session.exec(select(BlueprintConfig)).first()
+
+    if bp_config:
+        # Override LLM params from blueprint if not explicitly provided
+        if bp_config.llm_model and not model:
+            model = bp_config.llm_model
+        config_snapshot = {
+            "id": bp_config.id,
+            "name": bp_config.name,
+            "exam_profile": bp_config.exam_profile,
+            "difficulty": json.loads(bp_config.difficulty_json) if bp_config.difficulty_json else {},
+            "bloom_levels": json.loads(bp_config.bloom_levels_json) if bp_config.bloom_levels_json else [],
+            "question_types": json.loads(bp_config.question_types_json) if bp_config.question_types_json else {},
+            "nep_alignment": json.loads(bp_config.nep_alignment_json) if bp_config.nep_alignment_json else {},
+            "guardrails": json.loads(bp_config.guardrails_json) if bp_config.guardrails_json else {},
+            "llm_temperature": bp_config.llm_temperature,
+            "llm_max_tokens": bp_config.llm_max_tokens,
+            "llm_top_p": bp_config.llm_top_p,
+            "max_diagrams": bp_config.max_diagrams,
+            "time_minutes": bp_config.time_minutes,
+        }
+        print(f"\n{'='*70}", flush=True)
+        print(f"[Control Hub Integration] Applied Blueprint to Generation:", flush=True)
+        print(f"  • Blueprint: [{bp_config.id}] {bp_config.name} (Profile: {bp_config.exam_profile})", flush=True)
+        print(f"  • Difficulty: {config_snapshot.get('difficulty')}", flush=True)
+        print(f"  • LLM Temperature: {bp_config.llm_temperature}", flush=True)
+        print(f"  • LLM Top_P: {bp_config.llm_top_p}", flush=True)
+        print(f"  • LLM Max Tokens: {bp_config.llm_max_tokens}", flush=True)
+        print(f"{'='*70}\n", flush=True)
 
     # Infer subject
     query_text = f"{title} " + (per_unit_weights or "")
