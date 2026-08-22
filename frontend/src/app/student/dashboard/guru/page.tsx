@@ -57,9 +57,9 @@ export default function GuruPage() {
   };
 
   return (
-    <div className="flex gap-5 h-[calc(100vh-130px)]">
+    <div className="flex flex-col lg:flex-row gap-5 h-auto lg:h-[calc(100vh-130px)]">
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      <div className="h-[500px] lg:h-auto lg:flex-1 flex flex-col bg-white rounded-2xl border border-gray-200 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="flex items-center gap-3">
@@ -163,7 +163,7 @@ export default function GuruPage() {
       </div>
 
       {/* Side Panel */}
-      <div className="w-72 flex-shrink-0 flex flex-col gap-4">
+      <div className="w-full lg:w-72 flex-shrink-0 flex flex-col gap-4">
         {/* Quick questions */}
         <div className="bg-white rounded-2xl border border-gray-200 p-4">
           <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">

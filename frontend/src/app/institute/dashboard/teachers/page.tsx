@@ -22,14 +22,14 @@ export default function TeachersPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Teachers</h2>
           <p className="text-sm text-gray-500 mt-0.5">{TEACHERS.length} faculty members · Manage subjects and permissions</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors"
+          className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors w-full sm:w-auto"
         >
           <Plus className="w-4 h-4" /> Add Teacher
         </button>
@@ -69,7 +69,7 @@ export default function TeachersPage() {
       )}
 
       {/* Teacher Cards */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {TEACHERS.map(({ id, name, subject, email, phone, role, docsUploaded }) => (
           <div key={id} className="bg-white rounded-2xl border border-gray-200 p-5 hover:border-indigo-200 hover:shadow-sm transition-all">
             <div className="flex items-start justify-between mb-3">

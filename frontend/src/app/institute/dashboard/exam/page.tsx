@@ -75,9 +75,9 @@ export default function ExamPage() {
 
       {/* Generate Tab */}
       {tab === "generate" && (
-        <div className="grid grid-cols-5 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
           {/* Config Panel */}
-          <div className="col-span-3 bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+          <div className="col-span-1 lg:col-span-3 bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
             <h3 className="font-bold text-gray-900 flex items-center gap-2">
               <Cpu className="w-4 h-4 text-indigo-500" /> Exam Configuration
             </h3>
@@ -112,7 +112,7 @@ export default function ExamPage() {
             {/* Difficulty */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">Difficulty Distribution (%)</label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
                   { key: "easy", label: "Easy", color: "green" },
                   { key: "medium", label: "Medium", color: "amber" },
@@ -165,7 +165,7 @@ export default function ExamPage() {
           </div>
 
           {/* Info + Preview */}
-          <div className="col-span-2 space-y-4">
+          <div className="col-span-1 lg:col-span-2 space-y-4">
             <div className="bg-white rounded-2xl border border-gray-200 p-5">
               <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
                 <Brain className="w-4 h-4 text-indigo-500" /> AI Pipeline
@@ -260,7 +260,7 @@ export default function ExamPage() {
 
       {/* Pipeline Tab */}
       {tab === "pipeline" && (
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <h3 className="font-bold text-gray-900 mb-5">Exam Generation Pipeline</h3>
             <div className="space-y-4">

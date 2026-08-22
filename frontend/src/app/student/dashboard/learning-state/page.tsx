@@ -37,7 +37,7 @@ export default function LearningStatePage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Your Learning State</h2>
           <p className="text-sm text-gray-500 mt-0.5">
@@ -56,7 +56,7 @@ export default function LearningStatePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+      <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-xl w-fit max-w-full">
         {(["overview", "knowledge", "timeline", "export"] as const).map((t) => (
           <button
             key={t}
@@ -74,8 +74,8 @@ export default function LearningStatePage() {
       {tab === "overview" && (
         <div className="space-y-5">
           {/* Score + Brain viz placeholder */}
-          <div className="grid grid-cols-3 gap-5">
-            <div className="col-span-2 bg-white rounded-2xl border border-gray-200 p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div className="col-span-1 lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-gray-900">State Score</h3>
                 <span className="text-xs text-gray-400">Updated 2h ago</span>
@@ -108,7 +108,7 @@ export default function LearningStatePage() {
           {/* Dimensions */}
           <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <h3 className="font-bold text-gray-900 mb-4">Profile Dimensions</h3>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
                 { icon: BookOpen, label: "Academic", score: 84, color: "indigo" },
                 { icon: Code2, label: "Technical", score: 72, color: "blue" },
@@ -231,7 +231,7 @@ export default function LearningStatePage() {
             Your full Learning State (raw data) is ~400–500 MB. A compressed, human-readable export is available immediately.
             The full export will be emailed to you.
           </p>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
               { label: "Compressed Summary", desc: "JSON — shareable, AI-readable format", icon: BarChart3, btn: "Download Now" },
               { label: "Full Raw Export", desc: "Complete data — email delivery (~10 min)", icon: FileText, btn: "Request Export" },

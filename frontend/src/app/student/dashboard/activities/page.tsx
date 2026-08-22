@@ -102,7 +102,7 @@ export default function ActivitiesPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+      <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-xl w-fit max-w-full">
         {([
           { key: "suggested", label: "🎯 Suggested For You" },
           { key: "mind-games", label: "🧩 Mind Games" },
@@ -121,15 +121,15 @@ export default function ActivitiesPage() {
       </div>
 
       {/* Info Banner */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center gap-2">
-        <Gamepad2 className="w-4 h-4 text-amber-600 flex-shrink-0" />
-        <p className="text-sm text-amber-800 font-medium">
+      <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-start gap-2.5">
+        <Gamepad2 className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+        <p className="text-sm text-amber-800 font-medium leading-relaxed">
           Every activity you complete contributes to your Learning State. Completing 3+ activities this week unlocks a badge.
         </p>
       </div>
 
       {/* Activity Grid */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filtered.map(({ id, title, category, icon: Icon, color, desc, time, impact, link }) => (
           <div key={id} className="bg-white rounded-2xl border border-gray-200 p-5 hover:border-indigo-200 hover:shadow-sm transition-all group flex flex-col">
             <div className="flex items-start justify-between mb-3">

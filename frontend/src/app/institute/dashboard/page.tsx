@@ -53,7 +53,7 @@ export default function InstituteDashboardHome() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {STATS.map(({ label, value, change, icon: Icon, color }) => (
           <div key={label} className="bg-white rounded-2xl border border-gray-200 p-5">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${COLORMAP[color]}`}>
@@ -66,9 +66,9 @@ export default function InstituteDashboardHome() {
         ))}
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
-        <div className="col-span-2 bg-white rounded-2xl border border-gray-200 p-5">
+        <div className="col-span-1 lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-bold text-gray-900">Recent Activity</h3>
             <span className="text-xs text-indigo-600 font-medium flex items-center gap-1">

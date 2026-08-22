@@ -65,7 +65,7 @@ export default function DocumentsPage() {
       </div>
 
       {/* Category Cards */}
-      <div className="grid grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
         {CATEGORIES.map(({ key, label, icon: Icon, color, desc }) => {
           const count = docs.filter((d) => d.category === key).length;
           return (
@@ -91,9 +91,9 @@ export default function DocumentsPage() {
       </div>
 
       {/* Upload Zone + Document List */}
-      <div className="grid grid-cols-5 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
         {/* Upload Zone */}
-        <div className="col-span-2 space-y-3">
+        <div className="col-span-1 lg:col-span-2 space-y-3">
           <div
             onClick={() => addMockDoc(selectedCategory !== "all" ? selectedCategory : "course-objectives")}
             className="border-2 border-dashed border-gray-300 hover:border-indigo-400 hover:bg-indigo-50/30 rounded-xl p-8 flex flex-col items-center gap-3 cursor-pointer transition-all"
@@ -129,7 +129,7 @@ export default function DocumentsPage() {
         </div>
 
         {/* Document List */}
-        <div className="col-span-3 bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="col-span-1 lg:col-span-3 bg-white rounded-2xl border border-gray-200 overflow-hidden">
           <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
             <span className="text-sm font-bold text-gray-900">
               {selectedCategory === "all" ? "All Documents" : CATEGORIES.find((c) => c.key === selectedCategory)?.label}

@@ -62,7 +62,7 @@ export default function PlanningPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Planning</h2>
           <p className="text-sm text-gray-500 mt-0.5">Your goals, tasks, and upcoming schedule</p>
@@ -80,7 +80,7 @@ export default function PlanningPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+      <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-xl w-fit max-w-full">
         {([
           { key: "tasks", label: "📋 To-Do List" },
           { key: "goals", label: "🎯 Goals" },

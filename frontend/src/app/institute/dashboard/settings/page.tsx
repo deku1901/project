@@ -30,7 +30,7 @@ export default function SettingsPage() {
         <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
           <Globe className="w-4 h-4 text-indigo-500" /> Institute Profile
         </h3>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
             { label: "Institute Name", value: "MIT Academy of Engineering" },
             { label: "Type", value: "University / Autonomous" },

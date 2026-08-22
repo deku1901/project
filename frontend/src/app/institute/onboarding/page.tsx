@@ -67,7 +67,7 @@ export default function InstituteOnboarding() {
                   >
                     {step > s.id ? <CheckCircle2 className="w-4 h-4" /> : s.id}
                   </div>
-                  <span className={`text-xs font-medium ${step === s.id ? "text-indigo-600" : "text-gray-400"}`}>
+                  <span className={`text-[10px] sm:text-xs font-medium ${step === s.id ? "text-indigo-600" : "text-gray-400"} hidden sm:block`}>
                     {s.label}
                   </span>
                 </div>
@@ -101,7 +101,7 @@ export default function InstituteOnboarding() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   { key: "instituteName", label: "Institution Name", placeholder: "MIT Academy of Engineering", col: 2 },
                   { key: "type", label: "Type", placeholder: "University / College / School" },

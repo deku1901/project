@@ -96,9 +96,9 @@ export default function StudentOnboarding() {
                     {step > s.id ? <CheckCircle2 className="w-4 h-4" /> : s.id}
                   </div>
                   <span
-                    className={`text-xs font-medium ${
+                    className={`text-[10px] sm:text-xs font-medium ${
                       step === s.id ? "text-indigo-600" : "text-gray-400"
-                    }`}
+                    } hidden sm:block`}
                   >
                     {s.label}
                   </span>
@@ -138,7 +138,7 @@ export default function StudentOnboarding() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   { key: "fullName", label: "Full Name", placeholder: "Jayesh Patil", col: 2 },
                   { key: "rollNo", label: "Roll / Student ID", placeholder: "MIT2024001" },
@@ -251,7 +251,7 @@ export default function StudentOnboarding() {
               </div>
 
               {/* Options */}
-              <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                 {[
                   { icon: FileText, label: "Marksheets" },
                   { icon: Award, label: "Certificates" },
@@ -302,7 +302,7 @@ export default function StudentOnboarding() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {CONNECTORS.map(({ id, label, icon: Icon, desc }) => (
                   <button
                     key={id}

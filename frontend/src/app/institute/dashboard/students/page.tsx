@@ -48,7 +48,7 @@ export default function StudentsPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Student Management</h2>
           <p className="text-sm text-gray-500 mt-0.5">{STUDENTS.length} students enrolled · {STUDENTS.filter(s => s.status === "pending").length} pending verification</p>
@@ -69,7 +69,7 @@ export default function StudentsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+      <div className="flex flex-wrap gap-1 bg-gray-100 p-1 rounded-xl w-fit max-w-full">
         {([
           { key: "list", label: "Student List" },
           { key: "add", label: "+ Add Student" },
@@ -89,8 +89,8 @@ export default function StudentsPage() {
       {tab === "list" && (
         <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
           {/* Filters */}
-          <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
-            <div className="relative flex-1 max-w-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-gray-100">
+            <div className="relative w-full sm:max-w-xs">
               <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
@@ -100,7 +100,7 @@ export default function StudentsPage() {
                 className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
               />
             </div>
-            <div className="flex gap-1 bg-gray-50 p-0.5 rounded-lg border border-gray-200">
+            <div className="flex flex-wrap gap-1 bg-gray-50 p-0.5 rounded-lg border border-gray-200 w-full sm:w-auto justify-start">
               {(["all", "verified", "pending", "unverified"] as const).map((f) => (
                 <button
                   key={f}
@@ -111,7 +111,7 @@ export default function StudentsPage() {
                 </button>
               ))}
             </div>
-            <button className="flex items-center gap-2 text-sm font-medium text-gray-600 border border-gray-200 px-3 py-2 rounded-xl hover:bg-gray-50 transition-colors">
+            <button className="flex items-center gap-2 text-sm font-medium text-gray-600 border border-gray-200 px-3 py-2 rounded-xl hover:bg-gray-50 transition-colors w-full sm:w-auto justify-center">
               <Download className="w-3.5 h-3.5" /> Export
             </button>
           </div>

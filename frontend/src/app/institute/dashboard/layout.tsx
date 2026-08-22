@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   LayoutDashboard, Users, GraduationCap, BookOpen, FileText,
-  Cpu, Settings, LogOut, Bell, ChevronRight, Building2
+  Cpu, Settings, LogOut, Bell, ChevronRight, Building2, Menu, X
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -20,15 +20,33 @@ export default function InstituteDashboardLayout({ children }: { children: React
   const pathname = usePathname();
   const router = useRouter();
   const [notifCount] = useState(5);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close sidebar on path change
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
 
   const currentPage = NAV_ITEMS.find((n) => n.href === pathname)?.label ?? "Dashboard";
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar Overlay backdrop */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 bg-gray-900/40 z-30 lg:hidden transition-opacity duration-300"
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col fixed top-0 left-0 h-full z-30">
+      <aside
+        className={`w-64 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col fixed top-0 left-0 h-full z-40 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         {/* Brand */}
-        <div className="px-5 py-5 border-b border-gray-100">
+        <div className="px-5 py-5 border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
               <BookOpen className="w-4 h-4 text-white" />
@@ -38,6 +56,12 @@ export default function InstituteDashboardLayout({ children }: { children: React
               <div className="text-[10px] text-indigo-600 font-bold uppercase tracking-wide">Institute</div>
             </div>
           </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <X className="w-4 h-4 text-gray-500" />
+          </button>
         </div>
 
         {/* Institute card */}
@@ -62,6 +86,7 @@ export default function InstituteDashboardLayout({ children }: { children: React
               <Link
                 key={href}
                 href={href}
+                onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
                   active
                     ? "bg-indigo-600 text-white"
@@ -79,7 +104,10 @@ export default function InstituteDashboardLayout({ children }: { children: React
         {/* Bottom */}
         <div className="px-3 pb-4 border-t border-gray-100 pt-3">
           <button
-            onClick={() => router.push("/login")}
+            onClick={() => {
+              setSidebarOpen(false);
+              router.push("/login");
+            }}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 w-full transition-colors"
           >
             <LogOut className="w-4 h-4" />
@@ -89,16 +117,24 @@ export default function InstituteDashboardLayout({ children }: { children: React
       </aside>
 
       {/* Main */}
-      <div className="flex-1 ml-64 flex flex-col">
+      <div className="flex-1 lg:ml-64 flex flex-col min-w-0">
         {/* Topbar */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-20">
-          <div>
-            <h1 className="text-base font-bold text-gray-900">{currentPage}</h1>
-            <p className="text-xs text-gray-400">
-              MIT Academy of Engineering · {new Date().toLocaleDateString("en-IN", {
-                weekday: "long", day: "numeric", month: "long", year: "numeric",
-              })}
-            </p>
+        <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center justify-between sticky top-0 z-20">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 -ml-2 rounded-xl hover:bg-gray-100 transition-colors"
+            >
+              <Menu className="w-5 h-5 text-gray-500" />
+            </button>
+            <div>
+              <h1 className="text-base font-bold text-gray-900">{currentPage}</h1>
+              <p className="text-xs text-gray-400">
+                MIT Academy of Engineering · {new Date().toLocaleDateString("en-IN", {
+                  weekday: "long", day: "numeric", month: "long", year: "numeric",
+                })}
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <button className="relative p-2 rounded-xl hover:bg-gray-100 transition-colors">
@@ -115,7 +151,7 @@ export default function InstituteDashboardLayout({ children }: { children: React
           </div>
         </header>
 
-        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto min-w-0">{children}</main>
       </div>
     </div>
   );
