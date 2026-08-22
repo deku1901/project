@@ -6,15 +6,17 @@ import {
   FileText, Link2
 } from "lucide-react";
 
+import BrainVisualizer from "@/components/student/BrainVisualizer";
+
 const KNOWLEDGE_AREAS = [
-  { name: "Data Structures & Algorithms", level: 82, status: "verified" },
-  { name: "Object Oriented Programming", level: 75, status: "verified" },
-  { name: "Database Management (SQL)", level: 68, status: "claimed" },
-  { name: "Operating Systems", level: 60, status: "claimed" },
-  { name: "Web Development", level: 88, status: "verified" },
-  { name: "Machine Learning Basics", level: 45, status: "claimed" },
-  { name: "Computer Networks", level: 55, status: "claimed" },
-  { name: "Mathematics & Probability", level: 70, status: "verified" },
+  { name: "Data Structures & Algorithms", level: 82, status: "verified" as const },
+  { name: "Object Oriented Programming", level: 75, status: "verified" as const },
+  { name: "Database Management (SQL)", level: 68, status: "claimed" as const },
+  { name: "Operating Systems", level: 60, status: "claimed" as const },
+  { name: "Web Development", level: 88, status: "verified" as const },
+  { name: "Machine Learning Basics", level: 45, status: "claimed" as const },
+  { name: "Computer Networks", level: 55, status: "claimed" as const },
+  { name: "Mathematics & Probability", level: 70, status: "verified" as const },
 ];
 
 const TIMELINE = [
@@ -73,24 +75,29 @@ export default function LearningStatePage() {
       {/* Overview Tab */}
       {tab === "overview" && (
         <div className="space-y-5">
-          {/* Score + Brain viz placeholder */}
+          {/* Score + 3D Brain Three.js Visualizer */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <div className="col-span-1 lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-gray-900">State Score</h3>
-                <span className="text-xs text-gray-400">Updated 2h ago</span>
-              </div>
-              {/* Brain visualisation placeholder */}
-              <div className="h-48 bg-gradient-to-br from-indigo-50 to-violet-50 rounded-xl border border-indigo-100 flex flex-col items-center justify-center gap-3">
-                <Brain className="w-16 h-16 text-indigo-300" strokeWidth={1} />
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-indigo-600">84</div>
-                  <div className="text-sm text-gray-500">out of 100</div>
+            <div className="col-span-1 lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6 space-y-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-gray-900 flex items-center gap-2 text-base">
+                    <Brain className="w-5 h-5 text-indigo-600" />
+                    <span>3D Neural Learning State Matrix</span>
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Spatial neural mapping of cognitive mastery, verified facts, and synaptic energy.
+                  </p>
                 </div>
-                <span className="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-medium">
-                  🚀 3D Brain Visualisation coming soon
-                </span>
+                <div className="text-right">
+                  <div className="text-2xl font-black text-indigo-600">84<span className="text-sm font-semibold text-gray-400">/100</span></div>
+                  <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    High Synchrony
+                  </span>
+                </div>
               </div>
+
+              {/* 3D Brain Three.js Visualizer */}
+              <BrainVisualizer score={84} knowledgeAreas={KNOWLEDGE_AREAS} />
             </div>
 
             <div className="space-y-3">
