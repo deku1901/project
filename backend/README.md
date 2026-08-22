@@ -4,7 +4,7 @@ ExamGen is a full-stack, AI-powered exam generation web application designed for
 
 ## Setup & Running
 
-Create and activate a Python virtual environment (`python -m venv venv && source venv/bin/activate` or `venv\Scripts\activate` on Windows), install dependencies via `pip install -r requirements.txt`, set your OpenRouter environment variables (`export OPENROUTER_API_KEY="your_openrouter_api_key_here"` and `export OPENROUTER_MODEL="nvidia/nemotron-3.5-lightning:free"`), and launch the server with `uvicorn app:app --host 0.0.0.0 --port 8000 --reload`. Navigate to `http://localhost:8000` to start creating exams.
+Create and activate a Python virtual environment (`python -m venv venv && source venv/bin/activate` or `venv\Scripts\activate` on Windows), install dependencies via `pip install -r requirements.txt`, set your OpenRouter environment variables (`export OPENROUTER_API_KEY="your_openrouter_api_key_here"` and `export OPENROUTER_MODEL="nvidia/llama-nemotron-rerank-vl-1b-v2:free"`), and launch the server with `uvicorn app:app --host 0.0.0.0 --port 8000 --reload`. Navigate to `http://localhost:8000` to start creating exams.
 
 Install pdflatex (TeX Live) to enable PDF compile.
 

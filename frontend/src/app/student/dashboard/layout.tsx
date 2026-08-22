@@ -132,7 +132,7 @@ export default function StudentDashboardLayout({ children }: { children: React.R
             </button>
             <div>
               <h1 className="text-base font-bold text-gray-900">{currentPage}</h1>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-400" suppressHydrationWarning>
                 {new Date().toLocaleDateString("en-IN", {
                   weekday: "long", day: "numeric", month: "long", year: "numeric",
                 })}

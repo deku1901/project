@@ -948,7 +948,7 @@ export default function ExamPage() {
                           type="text"
                           value={overrideModel}
                           onChange={(e) => setOverrideModel(e.target.value)}
-                          placeholder="liquid/lfm-2.5-2.6b:free (or deepseek/deepseek-chat)"
+                          placeholder="nvidia/llama-nemotron-rerank-vl-1b-v2:free (Default)"
                           className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-xs"
                         />
                       </div>

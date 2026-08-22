@@ -3,8 +3,9 @@ import os
 import requests
 from typing import List, Dict, Any, Optional
 
-# Leave blank as required; can be overridden via environment variables or per-request parameters
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+DEFAULT_OPENROUTER_MODEL = "nvidia/llama-nemotron-rerank-vl-1b-v2:free"
+OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", DEFAULT_OPENROUTER_MODEL)
 
 # Verified reliable fast generative models on OpenRouter
 FALLBACK_MODELS = [
@@ -15,10 +16,6 @@ FALLBACK_MODELS = [
     "google/gemma-4-31b-it:free",
     "google/gemma-4-26b-a4b-it:free"
 ]
-
-OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "")
-if not OPENROUTER_MODEL or OPENROUTER_MODEL in ["anthropic/claude-3.5-sonnet", "nvidia/nemotron-3.5-lightning:free", "openai/gpt-oss-20b:free"]:
-    OPENROUTER_MODEL = FALLBACK_MODELS[0]
 
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -36,18 +33,9 @@ def call_openrouter(
     Call OpenRouter API with provided messages.
     Supports model fallbacks if the primary model hits rate limits (429) or provider errors.
     """
-    selected_key = (api_key if isinstance(api_key, str) and api_key.strip() else OPENROUTER_API_KEY) or ""
-    selected_key = selected_key.strip()
-
-    raw_model = (model if isinstance(model, str) and model.strip() else OPENROUTER_MODEL) or ""
-    raw_model = raw_model.strip() if raw_model else FALLBACK_MODELS[0]
-
-    # Guard: if user entered a non-generative rerank or embedding model, auto-substitute
-    if any(non_gen in raw_model.lower() for non_gen in ("rerank", "embed", "embedding")):
-        print(f"[ExamGen LLM] Rerank/Embedding model '{raw_model}' is not generative. Using '{FALLBACK_MODELS[0]}' instead.", flush=True)
-        primary_model = FALLBACK_MODELS[0]
-    else:
-        primary_model = raw_model
+    selected_key = (api_key.strip() if isinstance(api_key, str) and api_key.strip() else (OPENROUTER_API_KEY.strip() if OPENROUTER_API_KEY else ""))
+    raw_model = (model.strip() if isinstance(model, str) and model.strip() else (OPENROUTER_MODEL.strip() if OPENROUTER_MODEL else DEFAULT_OPENROUTER_MODEL))
+    primary_model = raw_model if raw_model else DEFAULT_OPENROUTER_MODEL
 
     if not selected_key:
         raise ValueError(

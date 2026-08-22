@@ -1,7 +1,8 @@
 export function getApiBaseUrl(): string {
-  // If an explicit backend URL is provided in env (e.g. Railway URL), use it
-  if (process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL.trim()) {
-    return process.env.NEXT_PUBLIC_API_URL.trim().replace(/\/+$/, "");
+  // If an explicit backend URL is provided in env (e.g. Railway or Vercel environment), use it
+  const envUrl = process.env.NEXT_PUBLIC_API_URL || process.env.BACKEND_URL;
+  if (envUrl && envUrl.trim()) {
+    return envUrl.trim().replace(/\/+$/, "");
   }
 
   // In browser on local machine, direct to local FastAPI port 8000
@@ -9,11 +10,11 @@ export function getApiBaseUrl(): string {
     if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
       return "http://127.0.0.1:8000";
     }
-    // In production on Vercel without env, use relative path (delegated to Next.js rewrites)
+    // In production without env, use relative path (delegated to Next.js rewrites)
     return "";
   }
 
-  return "http://127.0.0.1:8000";
+  return "";
 }
 
 export async function safeFetchJson<T = any>(

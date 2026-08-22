@@ -131,7 +131,7 @@ export default function InstituteDashboardLayout({ children }: { children: React
             </button>
             <div>
               <h1 className="text-base font-bold text-gray-900">{currentPage}</h1>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-400" suppressHydrationWarning>
                 MIT Academy of Engineering · {new Date().toLocaleDateString("en-IN", {
                   weekday: "long", day: "numeric", month: "long", year: "numeric",
                 })}

@@ -5,7 +5,7 @@ import {
   Image as ImageIcon, X, Sparkles, Code2, FunctionSquare,
   Loader2, AlertCircle, CheckCircle2, Trash2, Eye, Play
 } from "lucide-react";
-import { safeFetchJson } from "@/lib/api";
+import { getApiBaseUrl, safeFetchJson } from "@/lib/api";
 
 interface Question {
   id: number;
@@ -185,7 +185,8 @@ export default function PlotStudioModal({
       if (modelOverride.trim()) formData.append("model", modelOverride.trim());
       if (apiKeyOverride.trim()) formData.append("api_key", apiKeyOverride.trim());
 
-      const url = `${apiBaseUrl || "http://127.0.0.1:8000"}/api/generate_plot`;
+      const base = apiBaseUrl !== undefined && apiBaseUrl !== null && apiBaseUrl !== "" ? apiBaseUrl : getApiBaseUrl();
+      const url = `${base}/api/generate_plot`;
       const result = await safeFetchJson(url, {
         method: "POST",
         body: formData,
@@ -227,7 +228,8 @@ export default function PlotStudioModal({
       formData.append("question_id", question.id.toString());
       formData.append("code", pythonCode.trim());
 
-      const url = `${apiBaseUrl || "http://127.0.0.1:8000"}/api/generate_plot`;
+      const base = apiBaseUrl !== undefined && apiBaseUrl !== null && apiBaseUrl !== "" ? apiBaseUrl : getApiBaseUrl();
+      const url = `${base}/api/generate_plot`;
       const result = await safeFetchJson(url, {
         method: "POST",
         body: formData,
@@ -272,7 +274,8 @@ export default function PlotStudioModal({
       formData.append("x_max", (parseFloat(mathXMax) || 10).toString());
       if (mathTitle.trim()) formData.append("plot_title", mathTitle.trim());
 
-      const url = `${apiBaseUrl || "http://127.0.0.1:8000"}/api/generate_plot`;
+      const base = apiBaseUrl !== undefined && apiBaseUrl !== null && apiBaseUrl !== "" ? apiBaseUrl : getApiBaseUrl();
+      const url = `${base}/api/generate_plot`;
       const result = await safeFetchJson(url, {
         method: "POST",
         body: formData,
@@ -307,7 +310,8 @@ export default function PlotStudioModal({
       const formData = new FormData();
       formData.append("question_id", question.id.toString());
 
-      const url = `${apiBaseUrl || "http://127.0.0.1:8000"}/api/question/remove_image`;
+      const base = apiBaseUrl !== undefined && apiBaseUrl !== null && apiBaseUrl !== "" ? apiBaseUrl : getApiBaseUrl();
+      const url = `${base}/api/question/remove_image`;
       const result = await safeFetchJson(url, {
         method: "POST",
         body: formData,

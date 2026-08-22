@@ -243,9 +243,9 @@ export default function LoginPage() {
           <Image
             src="/exagoal.png"
             alt="Exagoal Logo"
-            width={190}
-            height={50}
-            className="h-10 w-auto object-contain"
+            width={240}
+            height={64}
+            className="h-11 sm:h-12 xl:h-14 w-auto object-contain"
             priority
           />
         </div>
@@ -440,9 +440,9 @@ export default function LoginPage() {
             <Image
               src="/exagoal.png"
               alt="Exagoal Logo"
-              width={160}
-              height={40}
-              className="h-9 w-auto object-contain"
+              width={200}
+              height={50}
+              className="h-10 w-auto object-contain"
             />
           </div>
 
@@ -575,14 +575,14 @@ export default function LoginPage() {
                   <button
                     type="button"
                     aria-label="Sign in with APAAR ID"
-                    className="flex items-center justify-center h-10 px-3 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/40 transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm"
+                    className="flex items-center justify-center h-10 px-3.5 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/40 transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm"
                   >
                     <Image
-                      src="/apaar-light.png"
+                      src="/apaar-black.png"
                       alt="APAAR"
-                      width={60}
-                      height={24}
-                      className="object-contain"
+                      width={84}
+                      height={28}
+                      className="h-5 sm:h-6 w-auto object-contain"
                     />
                   </button>
                 </div>

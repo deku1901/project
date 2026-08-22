@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Sparkles, X, Loader2, AlertCircle } from "lucide-react";
 import LatexRenderer from "@/components/shared/LatexRenderer";
-import { safeFetchJson } from "@/lib/api";
+import { getApiBaseUrl, safeFetchJson } from "@/lib/api";
 
 interface Question {
   id: number;
@@ -57,7 +57,8 @@ export default function AiEditModal({
       if (modelOverride.trim()) formData.append("model", modelOverride.trim());
       if (apiKeyOverride.trim()) formData.append("api_key", apiKeyOverride.trim());
 
-      const url = `${apiBaseUrl || "http://127.0.0.1:8000"}/api/edit_question`;
+      const base = apiBaseUrl !== undefined && apiBaseUrl !== null && apiBaseUrl !== "" ? apiBaseUrl : getApiBaseUrl();
+      const url = `${base}/api/edit_question`;
       const result = await safeFetchJson(url, {
         method: "POST",
         body: formData,
