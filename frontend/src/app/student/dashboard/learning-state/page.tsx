@@ -1,12 +1,13 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Brain, CheckCircle2, Clock, TrendingUp, AlertCircle,
   Star, BookOpen, Code2, Award, Globe, Zap, BarChart3,
-  FileText, Link2
+  FileText, Link2, Sliders, Sparkles
 } from "lucide-react";
 
 import BrainVisualizer from "@/components/student/BrainVisualizer";
+import { getApiBaseUrl, safeFetchJson } from "@/lib/api";
 
 const KNOWLEDGE_AREAS = [
   { name: "Data Structures & Algorithms", level: 82, status: "verified" as const },
@@ -33,8 +34,42 @@ const FACTS = [
   { label: "Pending Review", value: 3, color: "blue" },
 ];
 
+const DIFFICULTY_PROFILES = [
+  { key: "foundational", label: "Foundational", name: "Foundational Assessment", diff: { easy: 50, medium: 40, hard: 10 }, desc: "10% Hard · Low Synaptic Strain" },
+  { key: "university", label: "Standard", name: "Standard Undergraduate", diff: { easy: 30, medium: 50, hard: 20 }, desc: "20% Hard · Balanced Intensity" },
+  { key: "advanced", label: "Advanced", name: "Advanced Analytical", diff: { easy: 15, medium: 50, hard: 35 }, desc: "35% Hard · High Cognitive Load" },
+  { key: "mastery", label: "Mastery", name: "Mastery Evaluation", diff: { easy: 5, medium: 35, hard: 60 }, desc: "60% Hard · Hyper Synaptic Glow" },
+];
+
 export default function LearningStatePage() {
   const [tab, setTab] = useState<"overview" | "knowledge" | "timeline" | "export">("overview");
+  const [selectedDifficulty, setSelectedDifficulty] = useState(DIFFICULTY_PROFILES[1]);
+
+  useEffect(() => {
+    // Attempt to fetch active Control Hub blueprint to reflect live difficulty parameters
+    async function loadActiveBlueprint() {
+      try {
+        const base = getApiBaseUrl();
+        const res = await safeFetchJson<any[]>(`${base}/api/blueprint/configs`);
+        if (res.ok && Array.isArray(res.data) && res.data.length > 0) {
+          const defaultCfg = res.data.find((c) => c.is_default) || res.data[0];
+          if (defaultCfg && defaultCfg.difficulty) {
+            const matched = DIFFICULTY_PROFILES.find((p) => p.key === defaultCfg.exam_profile);
+            if (matched) {
+              setSelectedDifficulty({
+                ...matched,
+                name: defaultCfg.name || matched.name,
+                diff: defaultCfg.difficulty || matched.diff,
+              });
+            }
+          }
+        }
+      } catch {
+        // Fallback to default
+      }
+    }
+    loadActiveBlueprint();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -43,13 +78,13 @@ export default function LearningStatePage() {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Your Learning State</h2>
           <p className="text-sm text-gray-500 mt-0.5">
-            A living AI model of your academic profile — updated in real-time
+            A living AI model of your academic profile — dynamically responsive to Control Hub difficulty calibrations
           </p>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs bg-green-50 text-green-700 font-semibold px-3 py-1.5 rounded-full border border-green-200 flex items-center gap-1">
             <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-            Live
+            Live Synced
           </span>
           <button className="flex items-center gap-2 text-sm font-semibold text-gray-700 border border-gray-200 hover:border-indigo-300 hover:text-indigo-700 px-4 py-2 rounded-xl transition-all">
             <FileText className="w-4 h-4" /> Export State
@@ -78,14 +113,14 @@ export default function LearningStatePage() {
           {/* Score + 3D Brain Three.js Visualizer */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <div className="col-span-1 lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6 space-y-4 shadow-sm">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="font-bold text-gray-900 flex items-center gap-2 text-base">
                     <Brain className="w-5 h-5 text-indigo-600" />
                     <span>3D Neural Learning State Matrix</span>
                   </h3>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    Spatial neural mapping of cognitive mastery, verified facts, and synaptic energy.
+                    Glowing intensity and synaptic firing calibrate in real-time with Control Hub difficulty thresholds.
                   </p>
                 </div>
                 <div className="text-right">
@@ -96,8 +131,43 @@ export default function LearningStatePage() {
                 </div>
               </div>
 
-              {/* 3D Brain Three.js Visualizer */}
-              <BrainVisualizer score={84} knowledgeAreas={KNOWLEDGE_AREAS} />
+              {/* Difficulty Calibration Simulator / Control Hub Sync Bar */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 text-xs text-slate-700 font-semibold">
+                  <Sliders className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>Control Hub Difficulty Calibration:</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {DIFFICULTY_PROFILES.map((p) => {
+                    const isSel = selectedDifficulty.key === p.key;
+                    return (
+                      <button
+                        key={p.key}
+                        type="button"
+                        onClick={() => setSelectedDifficulty(p)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1 border ${
+                          isSel
+                            ? "bg-indigo-600 text-white border-indigo-600 shadow-sm font-semibold"
+                            : "bg-white text-slate-700 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
+                        }`}
+                        title={p.desc}
+                      >
+                        <span>{p.label}</span>
+                        <span className="text-[10px] opacity-75 font-mono">({p.diff.hard}%)</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 3D Brain Three.js Visualizer with Dynamic Difficulty Glow */}
+              <BrainVisualizer
+                score={84}
+                knowledgeAreas={KNOWLEDGE_AREAS}
+                difficulty={selectedDifficulty.diff}
+                blueprintName={selectedDifficulty.name}
+                examProfile={selectedDifficulty.key}
+              />
             </div>
 
             <div className="space-y-3">

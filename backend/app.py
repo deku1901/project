@@ -56,60 +56,74 @@ def init_db():
 
 
 def _seed_default_blueprints():
-    """Ensures default exam profile presets exist in the database."""
+    """Ensures default exam profile presets exist in the database with generic difficulty representations."""
     PRESETS = [
         {
-            "name": "University Standard",
+            "name": "Foundational Assessment",
+            "exam_profile": "foundational",
+            "difficulty_json": json.dumps({"easy": 50, "medium": 40, "hard": 10}),
+            "bloom_levels_json": json.dumps(["Remember", "Understand", "Apply"]),
+            "question_types_json": json.dumps({"mcq": 45, "numerical": 30, "subjective": 25}),
+            "nep_alignment_json": json.dumps({"co_mapping": True, "po_mapping": False, "cross_disciplinary": False, "formative": True}),
+            "guardrails_json": json.dumps({"no_duplicate_topics": True, "min_hard_questions": 0, "balance_marks": True, "require_diagram": False}),
+            "llm_temperature": 0.7, "llm_max_tokens": 4000, "llm_top_p": 0.9,
+            "max_diagrams": 2, "time_minutes": 120, "is_default": False
+        },
+        {
+            "name": "Standard Undergraduate",
             "exam_profile": "university",
             "difficulty_json": json.dumps({"easy": 30, "medium": 50, "hard": 20}),
             "bloom_levels_json": json.dumps(["Remember", "Understand", "Apply", "Analyze"]),
-            "question_types_json": json.dumps({"subjective": 60, "numerical": 25, "mcq": 15}),
+            "question_types_json": json.dumps({"subjective": 50, "numerical": 30, "mcq": 20}),
             "nep_alignment_json": json.dumps({"co_mapping": True, "po_mapping": True, "cross_disciplinary": False, "formative": False}),
-            "guardrails_json": json.dumps({"no_duplicate_topics": True, "min_hard_questions": 1, "balance_marks": True, "require_diagram": False}),
-            "llm_temperature": 0.7, "llm_max_tokens": 4000, "llm_top_p": 0.9,
+            "guardrails_json": json.dumps({"no_duplicate_topics": True, "min_hard_questions": 1, "balance_marks": True, "require_diagram": True}),
+            "llm_temperature": 0.65, "llm_max_tokens": 4500, "llm_top_p": 0.85,
             "max_diagrams": 3, "time_minutes": 180, "is_default": True
         },
         {
-            "name": "University Competitive",
-            "exam_profile": "competitive",
-            "difficulty_json": json.dumps({"easy": 20, "medium": 45, "hard": 35}),
+            "name": "Advanced Analytical",
+            "exam_profile": "advanced",
+            "difficulty_json": json.dumps({"easy": 15, "medium": 50, "hard": 35}),
             "bloom_levels_json": json.dumps(["Apply", "Analyze", "Evaluate"]),
-            "question_types_json": json.dumps({"subjective": 40, "numerical": 35, "mcq": 25}),
+            "question_types_json": json.dumps({"mcq": 40, "numerical": 35, "subjective": 25}),
             "nep_alignment_json": json.dumps({"co_mapping": True, "po_mapping": True, "cross_disciplinary": True, "formative": False}),
-            "guardrails_json": json.dumps({"no_duplicate_topics": True, "min_hard_questions": 2, "balance_marks": True, "require_diagram": True}),
-            "llm_temperature": 0.6, "llm_max_tokens": 4500, "llm_top_p": 0.85,
+            "guardrails_json": json.dumps({"no_duplicate_topics": True, "min_hard_questions": 3, "balance_marks": True, "require_diagram": True}),
+            "llm_temperature": 0.5, "llm_max_tokens": 5000, "llm_top_p": 0.8,
             "max_diagrams": 4, "time_minutes": 180, "is_default": False
         },
         {
-            "name": "JEE Main Profile",
-            "exam_profile": "jee_main",
-            "difficulty_json": json.dumps({"easy": 15, "medium": 50, "hard": 35}),
-            "bloom_levels_json": json.dumps(["Apply", "Analyze", "Evaluate"]),
-            "question_types_json": json.dumps({"mcq": 65, "numerical": 35, "subjective": 0}),
-            "nep_alignment_json": json.dumps({"co_mapping": True, "po_mapping": False, "cross_disciplinary": True, "formative": False}),
-            "guardrails_json": json.dumps({"no_duplicate_topics": True, "min_hard_questions": 3, "balance_marks": True, "require_diagram": True}),
-            "llm_temperature": 0.5, "llm_max_tokens": 5000, "llm_top_p": 0.8,
-            "max_diagrams": 5, "time_minutes": 180, "is_default": False
-        },
-        {
-            "name": "JEE Advanced Profile",
-            "exam_profile": "jee_advanced",
+            "name": "Mastery Evaluation",
+            "exam_profile": "mastery",
             "difficulty_json": json.dumps({"easy": 5, "medium": 35, "hard": 60}),
             "bloom_levels_json": json.dumps(["Analyze", "Evaluate", "Create"]),
-            "question_types_json": json.dumps({"mcq": 45, "numerical": 40, "subjective": 15}),
-            "nep_alignment_json": json.dumps({"co_mapping": True, "po_mapping": False, "cross_disciplinary": True, "formative": False}),
+            "question_types_json": json.dumps({"mcq": 30, "numerical": 40, "subjective": 30}),
+            "nep_alignment_json": json.dumps({"co_mapping": True, "po_mapping": True, "cross_disciplinary": True, "formative": False}),
             "guardrails_json": json.dumps({"no_duplicate_topics": True, "min_hard_questions": 5, "balance_marks": False, "require_diagram": True}),
-            "llm_temperature": 0.4, "llm_max_tokens": 6000, "llm_top_p": 0.75,
+            "llm_temperature": 0.35, "llm_max_tokens": 6000, "llm_top_p": 0.75,
             "max_diagrams": 5, "time_minutes": 180, "is_default": False
         },
     ]
     with Session(engine) as session:
         existing = session.exec(select(BlueprintConfig)).all()
+        # If no blueprints or old JEE profiles exist, seed / update
         if not existing:
             for preset in PRESETS:
                 session.add(BlueprintConfig(**preset))
             session.commit()
-            print("[Init] Seeded 4 default blueprint configurations.")
+            print("[Init] Seeded 4 generic difficulty blueprint configurations.")
+        else:
+            # Update any legacy presets
+            for item in existing:
+                if item.exam_profile == "jee_main":
+                    item.exam_profile = "advanced"
+                    item.name = "Advanced Analytical"
+                elif item.exam_profile == "jee_advanced":
+                    item.exam_profile = "mastery"
+                    item.name = "Mastery Evaluation"
+                elif item.exam_profile == "competitive":
+                    item.exam_profile = "advanced"
+                    item.name = "Advanced Analytical"
+            session.commit()
 
 
 @asynccontextmanager
@@ -812,10 +826,10 @@ async def generate_exam(
         # Exam profile context
         profile = config_snapshot.get("exam_profile", "university")
         profile_desc = {
-            "university": "University-level semester examination with focus on conceptual understanding.",
-            "competitive": "Competitive university examination with higher analytical demand.",
-            "jee_main": "JEE Main style: emphasis on speed, MCQs, numerical answer types, and applied problem solving.",
-            "jee_advanced": "JEE Advanced style: emphasis on multi-concept problems, high difficulty, analytical reasoning, and creative problem solving.",
+            "foundational": "Foundational / Beginner assessment: emphasis on core concepts, clear definitions, straightforward calculation, and basic problem solving.",
+            "university": "Standard Undergraduate examination: emphasis on balanced conceptual understanding, standard derivations, and applied analysis.",
+            "advanced": "Advanced Analytical examination: emphasis on multi-step derivations, complex problem solving, and synthesis of interconnected concepts.",
+            "mastery": "Mastery / Research Level examination: emphasis on rigorous proofs, edge-case evaluation, deep analytical synthesis, and creative problem solving.",
         }
         parts.append(f"- Exam Profile: {profile_desc.get(profile, profile)}")
 
@@ -885,15 +899,16 @@ async def generate_exam(
         scaled_max_tokens = min(8000, max(3500, n_questions * 420))
     scaled_timeout = min(120, max(60, n_questions * 6))
 
-    actual_model_used = model or None
+    model_to_use = (model.strip() if isinstance(model, str) and model.strip() else (bp_config.llm_model if bp_config and bp_config.llm_model else None))
+    actual_model_used = model_to_use or None
     try:
         raw_llm_output = call_openrouter(
             messages=messages,
-            model=model,
+            model=model_to_use,
             api_key=api_key,
             max_tokens=scaled_max_tokens,
             timeout=scaled_timeout,
-            temperature=bp_config.llm_temperature if bp_config else None,
+            temperature=bp_config.llm_temperature if bp_config and bp_config.llm_temperature is not None else 0.4,
             top_p=bp_config.llm_top_p if bp_config else None
         )
     except Exception as e:

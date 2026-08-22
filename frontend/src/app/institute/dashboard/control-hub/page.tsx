@@ -51,24 +51,24 @@ interface GenerationLogEntry {
 const ALL_BLOOM_LEVELS = ["Remember", "Understand", "Apply", "Analyze", "Evaluate", "Create"];
 
 const PROFILE_DESCRIPTIONS: Record<string, string> = {
-  university: "Semester exams with focus on conceptual depth",
-  competitive: "Higher analytical demand, balanced difficulty",
-  jee_main: "Speed-focused MCQs & numerical, applied problem solving",
-  jee_advanced: "Multi-concept, high difficulty, creative reasoning",
+  foundational: "Core recall & definitions, basic problem-solving (Easy 50% · Med 40% · Hard 10%)",
+  university: "Standard undergraduate, balanced derivations & analysis (Easy 30% · Med 50% · Hard 20%)",
+  advanced: "Rigorous analytical problem-solving & multi-step synthesis (Easy 15% · Med 50% · Hard 35%)",
+  mastery: "Research-grade proofs, deep synthesis & creative reasoning (Easy 5% · Med 35% · Hard 60%)",
 };
 
 const PROFILE_COLORS: Record<string, string> = {
+  foundational: "from-emerald-500 to-teal-600",
   university: "from-blue-500 to-indigo-600",
-  competitive: "from-indigo-500 to-purple-600",
-  jee_main: "from-purple-500 to-pink-600",
-  jee_advanced: "from-pink-500 to-red-600",
+  advanced: "from-indigo-500 to-purple-600",
+  mastery: "from-purple-500 to-pink-600",
 };
 
 const PROFILE_LABELS: Record<string, string> = {
-  university: "University Standard",
-  competitive: "University Competitive",
-  jee_main: "JEE Main",
-  jee_advanced: "JEE Advanced",
+  foundational: "Foundational",
+  university: "Standard (Undergraduate)",
+  advanced: "Advanced Analytical",
+  mastery: "Mastery (Expert)",
 };
 
 /* ═══════════════════════════════════════════════════════════════
@@ -300,7 +300,7 @@ export default function ControlHubPage() {
               Exam Profile
             </h3>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {(["university", "competitive", "jee_main", "jee_advanced"] as const).map((profile) => {
+              {(["foundational", "university", "advanced", "mastery"] as const).map((profile) => {
                 const isActive = activeConfig.exam_profile === profile;
                 const preset = configs.find((c) => c.exam_profile === profile);
                 return (

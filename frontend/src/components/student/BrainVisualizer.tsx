@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { Flame, Sparkles, Activity } from "lucide-react";
 
 interface KnowledgeArea {
   name: string;
@@ -10,9 +11,18 @@ interface KnowledgeArea {
   status: "verified" | "claimed";
 }
 
+interface DifficultyWeights {
+  easy?: number;
+  medium?: number;
+  hard?: number;
+}
+
 interface BrainVisualizerProps {
   score?: number;
   knowledgeAreas?: KnowledgeArea[];
+  difficulty?: DifficultyWeights;
+  blueprintName?: string;
+  examProfile?: string;
 }
 
 interface NodeData {
@@ -94,6 +104,9 @@ const REGION_CONFIG: Record<
 export default function BrainVisualizer({
   score = 84,
   knowledgeAreas = [],
+  difficulty = { easy: 30, medium: 50, hard: 20 },
+  blueprintName = "Standard Undergraduate",
+  examProfile = "university",
 }: BrainVisualizerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeRegion, setActiveRegion] = useState<string>("all");
@@ -103,6 +116,14 @@ export default function BrainVisualizer({
     data: NodeData;
   } | null>(null);
 
+  // Compute cognitive intensity from Control Hub difficulty parameters
+  const hardVal = difficulty?.hard ?? 20;
+  const easyVal = difficulty?.easy ?? 30;
+  const cognitiveLoad = Math.min(
+    100,
+    Math.max(15, Math.round(hardVal * 1.2 + (100 - easyVal) * 0.4))
+  );
+
   const sceneRef = useRef<{
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
@@ -110,6 +131,8 @@ export default function BrainVisualizer({
     controls: OrbitControls;
     geometry: THREE.BufferGeometry;
     edgeGeometry: THREE.BufferGeometry;
+    nodeMaterial: THREE.PointsMaterial;
+    edgeMaterial: THREE.LineBasicMaterial;
     nodesData: NodeData[];
     nodesPositions: number[];
     spikes: Array<{ mesh: THREE.Mesh; active: boolean; life: number }>;
@@ -118,7 +141,16 @@ export default function BrainVisualizer({
     currentFilter: string;
     triggerSpike: (forceIndex?: number, color?: THREE.Color) => void;
     applyFilter: (region: string) => void;
+    updateIntensity: (hardRatio: number) => void;
   } | null>(null);
+
+  // Update glowing intensity dynamically whenever Control Hub difficulty changes
+  useEffect(() => {
+    if (sceneRef.current) {
+      const hardRatio = hardVal / 100;
+      sceneRef.current.updateIntensity(hardRatio);
+    }
+  }, [hardVal, easyVal]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -144,7 +176,7 @@ export default function BrainVisualizer({
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.8;
+    controls.autoRotateSpeed = 0.6 + (hardVal / 100) * 0.8;
     controls.maxDistance = 22;
     controls.minDistance = 5;
 
@@ -197,7 +229,9 @@ export default function BrainVisualizer({
           // Connect subject and real data from project knowledge areas
           const regSubjects = reg.subjects;
           const matchedArea = knowledgeAreas.find((k) =>
-            regSubjects.some((s) => s.toLowerCase().includes(k.name.toLowerCase().slice(0, 4)))
+            regSubjects.some((s) =>
+              s.toLowerCase().includes(k.name.toLowerCase().slice(0, 4))
+            )
           );
 
           const subjectName =
@@ -206,7 +240,11 @@ export default function BrainVisualizer({
           const masteryVal = matchedArea
             ? `${matchedArea.level}%`
             : `${Math.floor(65 + Math.random() * 30)}%`;
-          const statusVal = matchedArea ? matchedArea.status : (Math.random() > 0.35 ? "verified" : "claimed");
+          const statusVal = matchedArea
+            ? matchedArea.status
+            : Math.random() > 0.35
+            ? "verified"
+            : "claimed";
 
           nodesData.push({
             id: nodesData.length,
@@ -233,8 +271,10 @@ export default function BrainVisualizer({
       new THREE.Float32BufferAttribute(vertexColors, 3)
     );
 
+    // Initial node material with intensity from hard difficulty %
+    const initialNodeSize = 0.14 + (hardVal / 100) * 0.1;
     const nodeMaterial = new THREE.PointsMaterial({
-      size: 0.16,
+      size: initialNodeSize,
       vertexColors: true,
       transparent: true,
       opacity: 0.95,
@@ -281,10 +321,12 @@ export default function BrainVisualizer({
       new THREE.Float32BufferAttribute(edgeColors, 3)
     );
 
+    // Synaptic glow intensity modulated by hard difficulty %
+    const initialEdgeOpacity = 0.22 + (hardVal / 100) * 0.32;
     const edgeMaterial = new THREE.LineBasicMaterial({
       vertexColors: true,
       transparent: true,
-      opacity: 0.28,
+      opacity: initialEdgeOpacity,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
@@ -293,9 +335,9 @@ export default function BrainVisualizer({
     brainGroup.add(edges);
 
     // --- 4. Energy Action Potential Spikes ---
-    const spikeCount = 10;
+    const spikeCount = 12;
     const spikeGroup = new THREE.Group();
-    const spikeGeo = new THREE.SphereGeometry(0.12, 8, 8);
+    const spikeGeo = new THREE.SphereGeometry(0.13, 8, 8);
     const spikes: Array<{ mesh: THREE.Mesh; active: boolean; life: number }> = [];
 
     for (let i = 0; i < spikeCount; i++) {
@@ -313,6 +355,13 @@ export default function BrainVisualizer({
 
     brainGroup.rotation.x = 0.12;
     scene.add(brainGroup);
+
+    // Dynamic intensity updater when Control Hub parameters change
+    const updateIntensity = (hardRatio: number) => {
+      nodeMaterial.size = 0.14 + hardRatio * 0.1;
+      edgeMaterial.opacity = 0.22 + hardRatio * 0.35;
+      controls.autoRotateSpeed = 0.6 + hardRatio * 0.8;
+    };
 
     // --- Filter logic ---
     const applyFilter = (filterKey: string) => {
@@ -401,6 +450,8 @@ export default function BrainVisualizer({
       controls,
       geometry,
       edgeGeometry,
+      nodeMaterial,
+      edgeMaterial,
       nodesData,
       nodesPositions,
       spikes,
@@ -409,6 +460,7 @@ export default function BrainVisualizer({
       currentFilter: "all",
       triggerSpike,
       applyFilter,
+      updateIntensity,
     };
 
     // --- Raycasting for Node Hover/Click ---
@@ -449,7 +501,7 @@ export default function BrainVisualizer({
 
     renderer.domElement.addEventListener("click", handlePointerDown);
 
-    // --- 5. Animation Loop ---
+    // --- 5. Animation Loop with Synaptic Spiking Scaled to Difficulty ---
     let reqId: number;
     const clock = new THREE.Clock();
 
@@ -458,19 +510,20 @@ export default function BrainVisualizer({
       const delta = clock.getDelta();
       const time = clock.getElapsedTime();
 
-      // Random action potential spike
-      if (Math.random() < 0.14) {
+      // Higher difficulty / cognitive load -> more frequent energetic synaptic spikes
+      const spikeChance = 0.08 + (hardVal / 100) * 0.22;
+      if (Math.random() < spikeChance) {
         triggerSpike();
       }
 
       spikes.forEach((spike) => {
         if (spike.active) {
-          spike.life -= delta * 2.2;
+          spike.life -= delta * (2.0 + (hardVal / 100) * 0.8);
           if (spike.life <= 0) {
             spike.active = false;
             (spike.mesh.material as THREE.MeshBasicMaterial).opacity = 0;
           } else {
-            const scale = Math.sin(spike.life * Math.PI) * 2.6;
+            const scale = Math.sin(spike.life * Math.PI) * (2.4 + (hardVal / 100) * 0.8);
             spike.mesh.scale.setScalar(scale);
             (spike.mesh.material as THREE.MeshBasicMaterial).opacity = spike.life;
           }
@@ -518,31 +571,77 @@ export default function BrainVisualizer({
   };
 
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden bg-slate-950 border border-indigo-900/40 shadow-2xl">
-      {/* HUD Topbar */}
-      <div className="absolute top-3 left-3 right-3 z-10 flex items-center justify-between pointer-events-none">
-        <div className="bg-slate-900/80 backdrop-blur-md border border-cyan-500/30 rounded-xl px-3.5 py-2 shadow-lg flex items-center gap-2.5 pointer-events-auto">
-          <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping" />
+    <div className="relative w-full rounded-2xl overflow-hidden bg-slate-950 border border-indigo-900/40 shadow-2xl transition-all duration-300">
+      {/* Dynamic Glow aura based on Control Hub Difficulty Intensity */}
+      <div
+        className="absolute -inset-1 rounded-2xl opacity-30 blur-xl pointer-events-none transition-all duration-500"
+        style={{
+          background:
+            hardVal >= 50
+              ? "radial-gradient(circle at center, rgba(236, 72, 153, 0.45), rgba(99, 102, 241, 0.2))"
+              : hardVal >= 30
+              ? "radial-gradient(circle at center, rgba(99, 102, 241, 0.4), rgba(6, 182, 212, 0.2))"
+              : "radial-gradient(circle at center, rgba(16, 185, 129, 0.35), rgba(99, 102, 241, 0.15))",
+        }}
+      />
+
+      {/* HUD Topbar with live Control Hub parameters reflection */}
+      <div className="absolute top-3 left-3 right-3 z-10 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+        <div className="bg-slate-900/85 backdrop-blur-md border border-cyan-500/30 rounded-xl px-3.5 py-2 shadow-lg flex items-center gap-2.5 pointer-events-auto">
+          <div
+            className={`w-2.5 h-2.5 rounded-full animate-ping ${
+              hardVal >= 50
+                ? "bg-pink-400"
+                : hardVal >= 30
+                ? "bg-cyan-400"
+                : "bg-emerald-400"
+            }`}
+          />
           <div>
-            <div className="text-[11px] font-mono font-bold text-white tracking-widest uppercase">
-              NEURAL CORE v2.4
+            <div className="text-[11px] font-mono font-bold text-white tracking-widest uppercase flex items-center gap-1.5">
+              <span>NEURAL CORE v2.4</span>
+              <span className="text-[9px] px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-normal">
+                {blueprintName}
+              </span>
             </div>
-            <div className="text-[10px] text-cyan-300 font-mono">
-              Learning State Sync: <strong className="text-white">{score}%</strong>
+            <div className="text-[10px] text-cyan-300 font-mono flex items-center gap-2">
+              <span>
+                Cognitive Sync: <strong className="text-white">{score}%</strong>
+              </span>
+              <span className="text-slate-400">·</span>
+              <span className="flex items-center gap-1 text-amber-300">
+                <Flame className="w-3 h-3 text-amber-400 inline" />
+                <span>
+                  Difficulty Glow: <strong className="text-white">{hardVal}% Hard</strong>
+                </span>
+              </span>
             </div>
           </div>
         </div>
 
-        <div className="bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-[11px] font-mono text-slate-300 pointer-events-auto flex items-center gap-1.5 shadow-md">
-          <span className="w-2 h-2 rounded-full bg-emerald-400" />
-          <span>Interactive · Drag to Rotate</span>
+        <div className="bg-slate-900/85 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-[11px] font-mono text-slate-300 pointer-events-auto flex items-center gap-1.5 shadow-md">
+          <Activity className="w-3 h-3 text-emerald-400" />
+          <span>
+            Synaptic Firing:{" "}
+            <strong
+              className={
+                hardVal >= 50
+                  ? "text-pink-400"
+                  : hardVal >= 30
+                  ? "text-cyan-300"
+                  : "text-emerald-400"
+              }
+            >
+              {cognitiveLoad}% Load
+            </strong>
+          </span>
         </div>
       </div>
 
-      {/* 3D Canvas Canvas Mount */}
+      {/* 3D Canvas Mount */}
       <div
         ref={containerRef}
-        className="w-full h-[360px] sm:h-[400px] cursor-grab active:cursor-grabbing"
+        className="w-full h-[360px] sm:h-[400px] cursor-grab active:cursor-grabbing relative z-0"
       />
 
       {/* Interactive Floating Sci-Fi Tooltip */}
@@ -550,12 +649,20 @@ export default function BrainVisualizer({
         <div
           className="absolute z-20 pointer-events-none p-3 rounded-xl bg-slate-950/95 border border-cyan-400 backdrop-blur-xl shadow-[0_0_20px_rgba(0,255,255,0.25)] min-w-[200px] text-xs font-mono animate-in fade-in zoom-in-95 duration-150"
           style={{
-            left: Math.min(hoveredNode.x, (containerRef.current?.clientWidth || 300) - 220),
-            top: Math.min(hoveredNode.y, (containerRef.current?.clientHeight || 300) - 130),
+            left: Math.min(
+              hoveredNode.x,
+              (containerRef.current?.clientWidth || 300) - 220
+            ),
+            top: Math.min(
+              hoveredNode.y,
+              (containerRef.current?.clientHeight || 300) - 130
+            ),
           }}
         >
           <div className="text-white font-bold pb-1 mb-1.5 border-b border-cyan-500/30 flex items-center justify-between">
-            <span className="truncate max-w-[150px]">{hoveredNode.data.subject}</span>
+            <span className="truncate max-w-[150px]">
+              {hoveredNode.data.subject}
+            </span>
             <span
               className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${
                 hoveredNode.data.status === "verified"
@@ -569,7 +676,9 @@ export default function BrainVisualizer({
           <div className="space-y-1 text-[11px]">
             <div className="flex justify-between text-slate-400">
               <span>MASTERY:</span>
-              <strong className="text-cyan-300">{hoveredNode.data.mastery}</strong>
+              <strong className="text-cyan-300">
+                {hoveredNode.data.mastery}
+              </strong>
             </div>
             <div className="flex justify-between text-slate-400">
               <span>SYNC RATE:</span>
@@ -584,9 +693,14 @@ export default function BrainVisualizer({
       )}
 
       {/* Region Filter Buttons Bar (Below the 3D Brain) */}
-      <div className="p-3 bg-slate-900/90 border-t border-indigo-900/40 backdrop-blur-md">
-        <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-2 font-semibold">
-          Filter Cognitive Synapses By Region:
+      <div className="p-3 bg-slate-900/90 border-t border-indigo-900/40 backdrop-blur-md relative z-10">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+            Filter Cognitive Synapses By Region:
+          </div>
+          <div className="text-[10px] font-mono text-indigo-300">
+            Control Hub Profile: <strong className="text-white">{blueprintName}</strong> ({hardVal}% Hard)
+          </div>
         </div>
         <div className="flex flex-wrap gap-1.5">
           <button

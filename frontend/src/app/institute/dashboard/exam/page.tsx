@@ -822,18 +822,18 @@ export default function ExamPage() {
                               type="button"
                               onClick={() => {
                                 setSelectedBlueprintId(cfg.id);
-                                if (cfg.exam_profile === "jee_advanced") {
-                                  setExamTitle("JEE Advanced Mathematics & Calculus Evaluation");
+                                if (cfg.exam_profile === "mastery") {
+                                  setExamTitle("Mastery Synthesis & Rigorous Mathematical Proofs");
                                   setMaxMarks(120);
                                   setNQuestions(6);
-                                } else if (cfg.exam_profile === "jee_main") {
-                                  setExamTitle("JEE Main Applied Calculus & Analysis Test");
+                                } else if (cfg.exam_profile === "advanced") {
+                                  setExamTitle("Advanced Analytical Problem Solving Assessment");
                                   setMaxMarks(100);
                                   setNQuestions(5);
-                                } else if (cfg.exam_profile === "competitive") {
-                                  setExamTitle("Competitive Engineering Mathematics Assessment");
-                                  setMaxMarks(100);
-                                  setNQuestions(5);
+                                } else if (cfg.exam_profile === "foundational") {
+                                  setExamTitle("Foundational Concepts & Applied Problem Solving");
+                                  setMaxMarks(60);
+                                  setNQuestions(4);
                                 } else {
                                   setExamTitle("Advanced Calculus & Differential Equations");
                                   setMaxMarks(100);
