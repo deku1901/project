@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "ExaGoal Control Hub - No-Code Blueprint Extension",
+  "version": "1.0.0",
+  "description": "Instant browser popup to configure AI examination difficulty, Bloom taxonomy, question distributions, and trust-transparency parameters on the fly.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ExaGoal Control Hub",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "http://127.0.0.1:8000/*"
+  ]
+}

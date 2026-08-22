@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExaGoal Control Hub Extension</title>
+  <link rel="stylesheet" href="popup.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="ext-container">
+    <!-- Header -->
+    <header class="ext-header">
+      <div class="brand">
+        <div class="logo-badge">⚡</div>
+        <div>
+          <h1>ExaGoal Control Hub</h1>
+          <p class="subtitle">No-Code Blueprint Extension · v1.0</p>
+        </div>
+      </div>
+      <span class="live-pill"><span class="dot"></span> Live Sync</span>
+    </header>
+
+    <!-- Profile Selector -->
+    <section class="section">
+      <label class="section-label">1. Difficulty Preset</label>
+      <div class="profile-grid">
+        <button class="profile-btn" data-profile="foundational">
+          <span class="p-icon">🌱</span>
+          <span class="p-title">Foundational</span>
+          <span class="p-sub">10% Hard</span>
+        </button>
+        <button class="profile-btn active" data-profile="university">
+          <span class="p-icon">🎓</span>
+          <span class="p-title">Standard</span>
+          <span class="p-sub">20% Hard</span>
+        </button>
+        <button class="profile-btn" data-profile="advanced">
+          <span class="p-icon">⚡</span>
+          <span class="p-title">Advanced</span>
+          <span class="p-sub">35% Hard</span>
+        </button>
+        <button class="profile-btn" data-profile="mastery">
+          <span class="p-icon">🔥</span>
+          <span class="p-title">Mastery</span>
+          <span class="p-sub">60% Hard</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Difficulty Distribution -->
+    <section class="section">
+      <div class="section-title-row">
+        <label class="section-label">2. Difficulty Distribution</label>
+        <span class="gauge-total" id="diffTotal">100%</span>
+      </div>
+      <div class="slider-group">
+        <div class="slider-item">
+          <div class="slider-header">
+            <span>Easy (Recall/Concepts)</span>
+            <span class="val-badge green" id="easyVal">30%</span>
+          </div>
+          <input type="range" id="easySlider" min="0" max="100" value="30" class="range-slider range-green">
+        </div>
+        <div class="slider-item">
+          <div class="slider-header">
+            <span>Medium (Analysis)</span>
+            <span class="val-badge blue" id="medVal">50%</span>
+          </div>
+          <input type="range" id="medSlider" min="0" max="100" value="50" class="range-slider range-blue">
+        </div>
+        <div class="slider-item">
+          <div class="slider-header">
+            <span>Hard (Proofs/Synthesis)</span>
+            <span class="val-badge purple" id="hardVal">20%</span>
+          </div>
+          <input type="range" id="hardSlider" min="0" max="100" value="20" class="range-slider range-purple">
+        </div>
+      </div>
+    </section>
+
+    <!-- Bloom's Taxonomy -->
+    <section class="section">
+      <label class="section-label">3. Bloom's Cognitive Taxonomy</label>
+      <div class="chips-grid" id="bloomChips">
+        <button class="chip active" data-bloom="Remember">Remember</button>
+        <button class="chip active" data-bloom="Understand">Understand</button>
+        <button class="chip active" data-bloom="Apply">Apply</button>
+        <button class="chip active" data-bloom="Analyze">Analyze</button>
+        <button class="chip" data-bloom="Evaluate">Evaluate</button>
+        <button class="chip" data-bloom="Create">Create</button>
+      </div>
+    </section>
+
+    <!-- Question Distribution -->
+    <section class="section">
+      <label class="section-label">4. Question Type Weights</label>
+      <div class="qtypes-row">
+        <div class="qtype-card">
+          <span class="qt-label">Subjective</span>
+          <span class="qt-val" id="qtSubVal">50%</span>
+        </div>
+        <div class="qtype-card">
+          <span class="qt-label">Numerical</span>
+          <span class="qt-val" id="qtNumVal">30%</span>
+        </div>
+        <div class="qtype-card">
+          <span class="qt-label">MCQ</span>
+          <span class="qt-val" id="qtMcqVal">20%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Action Buttons -->
+    <footer class="ext-footer">
+      <button class="btn-save" id="btnSave">
+        <span>⚡ Save & Sync Blueprint</span>
+      </button>
+      <div class="status-msg" id="statusMsg"></div>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
