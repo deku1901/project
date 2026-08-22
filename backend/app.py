@@ -1,6 +1,8 @@
 import os
 import json
 import re
+import time
+from datetime import datetime
 from typing import Optional, List, Dict, Any
 from contextlib import asynccontextmanager
 
@@ -9,7 +11,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import SQLModel, Session, create_engine, select
 
-from models import ContextItem, Exam, Question
+from models import ContextItem, Exam, Question, BlueprintConfig, GenerationLog
 from vector_store import VectorStore
 from llm_client import call_openrouter
 from image_utils import render_plot_from_spec, execute_matplotlib_code, generate_plot_code_from_ai
@@ -49,6 +51,65 @@ def init_db():
             print(f"[DB Migration Warning] {e}")
         finally:
             conn.close()
+    # Seed default blueprint configs if table is empty
+    _seed_default_blueprints()
+
+
+def _seed_default_blueprints():
+    """Ensures default exam profile presets exist in the database."""
+    PRESETS = [
+        {
+            "name": "University Standard",
+            "exam_profile": "university",
+            "difficulty_json": json.dumps({"easy": 30, "medium": 50, "hard": 20}),
+            "bloom_levels_json": json.dumps(["Remember", "Understand", "Apply", "Analyze"]),
+            "question_types_json": json.dumps({"subjective": 60, "numerical": 25, "mcq": 15}),
+            "nep_alignment_json": json.dumps({"co_mapping": True, "po_mapping": True, "cross_disciplinary": False, "formative": False}),
+            "guardrails_json": json.dumps({"no_duplicate_topics": True, "min_hard_questions": 1, "balance_marks": True, "require_diagram": False}),
+            "llm_temperature": 0.7, "llm_max_tokens": 4000, "llm_top_p": 0.9,
+            "max_diagrams": 3, "time_minutes": 180, "is_default": True
+        },
+        {
+            "name": "University Competitive",
+            "exam_profile": "competitive",
+            "difficulty_json": json.dumps({"easy": 20, "medium": 45, "hard": 35}),
+            "bloom_levels_json": json.dumps(["Apply", "Analyze", "Evaluate"]),
+            "question_types_json": json.dumps({"subjective": 40, "numerical": 35, "mcq": 25}),
+            "nep_alignment_json": json.dumps({"co_mapping": True, "po_mapping": True, "cross_disciplinary": True, "formative": False}),
+            "guardrails_json": json.dumps({"no_duplicate_topics": True, "min_hard_questions": 2, "balance_marks": True, "require_diagram": True}),
+            "llm_temperature": 0.6, "llm_max_tokens": 4500, "llm_top_p": 0.85,
+            "max_diagrams": 4, "time_minutes": 180, "is_default": False
+        },
+        {
+            "name": "JEE Main Profile",
+            "exam_profile": "jee_main",
+            "difficulty_json": json.dumps({"easy": 15, "medium": 50, "hard": 35}),
+            "bloom_levels_json": json.dumps(["Apply", "Analyze", "Evaluate"]),
+            "question_types_json": json.dumps({"mcq": 65, "numerical": 35, "subjective": 0}),
+            "nep_alignment_json": json.dumps({"co_mapping": True, "po_mapping": False, "cross_disciplinary": True, "formative": False}),
+            "guardrails_json": json.dumps({"no_duplicate_topics": True, "min_hard_questions": 3, "balance_marks": True, "require_diagram": True}),
+            "llm_temperature": 0.5, "llm_max_tokens": 5000, "llm_top_p": 0.8,
+            "max_diagrams": 5, "time_minutes": 180, "is_default": False
+        },
+        {
+            "name": "JEE Advanced Profile",
+            "exam_profile": "jee_advanced",
+            "difficulty_json": json.dumps({"easy": 5, "medium": 35, "hard": 60}),
+            "bloom_levels_json": json.dumps(["Analyze", "Evaluate", "Create"]),
+            "question_types_json": json.dumps({"mcq": 45, "numerical": 40, "subjective": 15}),
+            "nep_alignment_json": json.dumps({"co_mapping": True, "po_mapping": False, "cross_disciplinary": True, "formative": False}),
+            "guardrails_json": json.dumps({"no_duplicate_topics": True, "min_hard_questions": 5, "balance_marks": False, "require_diagram": True}),
+            "llm_temperature": 0.4, "llm_max_tokens": 6000, "llm_top_p": 0.75,
+            "max_diagrams": 5, "time_minutes": 180, "is_default": False
+        },
+    ]
+    with Session(engine) as session:
+        existing = session.exec(select(BlueprintConfig)).all()
+        if not existing:
+            for preset in PRESETS:
+                session.add(BlueprintConfig(**preset))
+            session.commit()
+            print("[Init] Seeded 4 default blueprint configurations.")
 
 
 @asynccontextmanager
@@ -635,23 +696,58 @@ async def generate_exam(
     per_unit_weights: Optional[str] = Form(None),
     include_diagrams: Optional[bool] = Form(True),
     model: Optional[str] = Form(None),
-    api_key: Optional[str] = Form(None)
+    api_key: Optional[str] = Form(None),
+    blueprint_config_id: Optional[int] = Form(None)
 ):
     """
     High-speed, single-pass exam generator that retrieves relevant curriculum context
     from FAISS, formats subject-specific prompts (Maths, History, Sciences, etc.),
     and generates questions with embedded Matplotlib image specs in ONE efficient LLM call.
+
+    If blueprint_config_id is provided, loads the saved BlueprintConfig and injects
+    difficulty, Bloom's taxonomy, question type, and guardrail constraints into the
+    LLM system prompt for Trust & Transparency compliance.
     """
+    gen_start_time = time.time()
+
+    # ── Load Blueprint Config if provided ──────────────────────────────────
+    bp_config = None
+    config_snapshot = {}
+    if blueprint_config_id:
+        with Session(engine) as session:
+            bp_config = session.get(BlueprintConfig, blueprint_config_id)
+        if bp_config:
+            # Override LLM params from blueprint
+            if bp_config.llm_model and not model:
+                model = bp_config.llm_model
+            config_snapshot = {
+                "id": bp_config.id,
+                "name": bp_config.name,
+                "exam_profile": bp_config.exam_profile,
+                "difficulty": json.loads(bp_config.difficulty_json) if bp_config.difficulty_json else {},
+                "bloom_levels": json.loads(bp_config.bloom_levels_json) if bp_config.bloom_levels_json else [],
+                "question_types": json.loads(bp_config.question_types_json) if bp_config.question_types_json else {},
+                "nep_alignment": json.loads(bp_config.nep_alignment_json) if bp_config.nep_alignment_json else {},
+                "guardrails": json.loads(bp_config.guardrails_json) if bp_config.guardrails_json else {},
+                "llm_temperature": bp_config.llm_temperature,
+                "llm_max_tokens": bp_config.llm_max_tokens,
+                "llm_top_p": bp_config.llm_top_p,
+                "max_diagrams": bp_config.max_diagrams,
+                "time_minutes": bp_config.time_minutes,
+            }
+
     # Infer subject
     query_text = f"{title} " + (per_unit_weights or "")
     detected_subj = detect_subject(query_text, default_subject="General")
 
     # Semantic context retrieval from FAISS
     contexts = []
+    faiss_retrieval_count = 0
     if vector_store:
         contexts = vector_store.query(query_text, k=8, subject=detected_subj if detected_subj != "General" else None)
         if not contexts:
             contexts = vector_store.query(query_text, k=6)
+        faiss_retrieval_count = len(contexts)
 
     context_str = "\n\n".join([f"- {c.get('content', '')}" for c in contexts]) if contexts else "Standard university curriculum curriculum."
 
@@ -682,9 +778,64 @@ async def generate_exam(
             "- Create rigorous, clear questions with balanced weightages.\n"
         )
 
+    # ── Build Blueprint Constraint Instructions ─────────────────────────────
+    blueprint_instructions = ""
+    if bp_config and config_snapshot:
+        parts = ["\nBLUEPRINT CONFIGURATION CONSTRAINTS (MUST FOLLOW):"]
+
+        # Difficulty distribution
+        diff = config_snapshot.get("difficulty", {})
+        if diff:
+            parts.append(f"- Difficulty Distribution: {diff.get('easy', 0)}% Easy, {diff.get('medium', 0)}% Medium, {diff.get('hard', 0)}% Hard.")
+            parts.append(f"  Assign a 'difficulty' field to each question: 'easy', 'medium', or 'hard'.")
+
+        # Bloom's Taxonomy
+        blooms = config_snapshot.get("bloom_levels", [])
+        if blooms:
+            parts.append(f"- Bloom's Taxonomy Levels to target: {', '.join(blooms)}. Assign a 'bloom_level' field to each question.")
+
+        # Question types
+        qtypes = config_snapshot.get("question_types", {})
+        if qtypes:
+            type_strs = [f"{k}: {v}%" for k, v in qtypes.items() if v > 0]
+            parts.append(f"- Question Type Distribution: {', '.join(type_strs)}. Assign a 'question_type' field ('mcq', 'numerical', 'subjective', 'proof') to each question.")
+
+        # Guardrails
+        guards = config_snapshot.get("guardrails", {})
+        if guards.get("no_duplicate_topics"):
+            parts.append("- GUARDRAIL: No two questions may cover the exact same topic.")
+        if guards.get("min_hard_questions"):
+            parts.append(f"- GUARDRAIL: Include at least {guards['min_hard_questions']} hard-difficulty question(s).")
+        if guards.get("balance_marks"):
+            parts.append("- GUARDRAIL: Distribute marks as evenly as possible across question types.")
+
+        # Exam profile context
+        profile = config_snapshot.get("exam_profile", "university")
+        profile_desc = {
+            "university": "University-level semester examination with focus on conceptual understanding.",
+            "competitive": "Competitive university examination with higher analytical demand.",
+            "jee_main": "JEE Main style: emphasis on speed, MCQs, numerical answer types, and applied problem solving.",
+            "jee_advanced": "JEE Advanced style: emphasis on multi-concept problems, high difficulty, analytical reasoning, and creative problem solving.",
+        }
+        parts.append(f"- Exam Profile: {profile_desc.get(profile, profile)}")
+
+        # Diagram constraint
+        max_diag = config_snapshot.get("max_diagrams", 3)
+        parts.append(f"- Maximum {max_diag} questions should include image_spec diagrams.")
+
+        # Time allocation
+        time_min = config_snapshot.get("time_minutes", 180)
+        parts.append(f"- Total exam time: {time_min} minutes. Calibrate question difficulty accordingly.")
+
+        # Output schema update
+        parts.append('- Updated JSON schema per question: {"q_index": 1, "text": "...", "marks": 25, "difficulty": "medium", "bloom_level": "Apply", "question_type": "numerical", "image_spec": {...}}')
+
+        blueprint_instructions = "\n".join(parts) + "\n"
+
     system_prompt = (
         "You are an elite university professor and examination board author creating a premier examination paper.\n\n"
         f"{subject_guidance}\n"
+        f"{blueprint_instructions}"
         "VISUAL DIAGRAM & GRAPH RULES:\n"
         "1. Whenever a question involves 2D/3D geometry, curves, surfaces, vector fields, waveforms, data plots, or timeline charts, "
         "provide an 'image_spec' object with a 'code' field containing executable Python/Matplotlib code using 'np', 'plt', 'fig', 'ax'.\n"
@@ -699,6 +850,9 @@ async def generate_exam(
         '    "q_index": 1,\n'
         '    "text": "Find the directional derivative of $u(x,y) = x^2 y + x y^2$ at $(1,2)$ in the direction of vector $\\\\mathbf{v} = (1,1)$.",\n'
         '    "marks": 25,\n'
+        '    "difficulty": "medium",\n'
+        '    "bloom_level": "Apply",\n'
+        '    "question_type": "numerical",\n'
         '    "image_spec": {\n'
         '      "code": "x = np.linspace(-2, 2, 40)\\ny = np.linspace(-2, 2, 40)\\nX, Y = np.meshgrid(x, y)\\nZ = X**2 * Y + X * Y**2\\nax = fig.add_subplot(111, projection=\'3d\')\\nax.plot_surface(X, Y, Z, cmap=\'viridis\')\\nax.set_title(\'Surface Plot of u(x,y)\')"\n'
         '    }\n'
@@ -715,6 +869,7 @@ async def generate_exam(
         f"Curriculum Reference Context:\n{context_str}\n\n"
         f"Create exactly {n_questions} high-quality, distinctive questions whose individual marks sum to {max_marks}. "
         f"{'Include executable matplotlib code in image_spec for relevant questions (maximum 2-3 diagrams across the exam).' if include_diagrams else 'Pure text and equations without image_spec.'} "
+        f"Include 'difficulty', 'bloom_level', and 'question_type' fields in each question object. "
         f"Begin directly with '['. Return ONLY the JSON array."
     )
 
@@ -724,16 +879,22 @@ async def generate_exam(
     ]
 
     # Dynamically scale max_tokens and timeout to support large question sets (e.g. 15-20 questions)
-    scaled_max_tokens = min(8000, max(3500, n_questions * 420))
+    if bp_config and bp_config.llm_max_tokens:
+        scaled_max_tokens = min(8000, max(3500, bp_config.llm_max_tokens))
+    else:
+        scaled_max_tokens = min(8000, max(3500, n_questions * 420))
     scaled_timeout = min(120, max(60, n_questions * 6))
 
+    actual_model_used = model or None
     try:
         raw_llm_output = call_openrouter(
             messages=messages,
             model=model,
             api_key=api_key,
             max_tokens=scaled_max_tokens,
-            timeout=scaled_timeout
+            timeout=scaled_timeout,
+            temperature=bp_config.llm_temperature if bp_config else None,
+            top_p=bp_config.llm_top_p if bp_config else None
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"LLM Generation Error: {str(e)}")
@@ -751,6 +912,8 @@ async def generate_exam(
                 "raw_output": raw_llm_output
             }
         )
+
+    gen_duration_ms = int((time.time() - gen_start_time) * 1000)
 
     with Session(engine) as session:
         exam = Exam(
@@ -773,6 +936,13 @@ async def generate_exam(
         }
 
         saved_questions = []
+        # Transparency counters
+        difficulty_counts = {"easy": 0, "medium": 0, "hard": 0}
+        bloom_counts = {}
+        qtype_counts = {}
+        total_marks_sum = 0
+        diagram_count = 0
+
         for idx, q_data in enumerate(questions_data, start=1):
             raw_text = q_data.get("text", "")
             clean_text = _clean_question_text(raw_text)
@@ -780,9 +950,21 @@ async def generate_exam(
             img_spec = q_data.get("image_spec")
             img_path = None
 
+            # Track transparency metadata
+            diff_label = q_data.get("difficulty", "medium").lower()
+            if diff_label in difficulty_counts:
+                difficulty_counts[diff_label] += 1
+            bloom_label = q_data.get("bloom_level", "Apply")
+            bloom_counts[bloom_label] = bloom_counts.get(bloom_label, 0) + 1
+            qtype_label = q_data.get("question_type", "subjective")
+            qtype_counts[qtype_label] = qtype_counts.get(qtype_label, 0) + 1
+            total_marks_sum += marks
+
             # Render plot locally in milliseconds
             if img_spec and include_diagrams:
                 img_path = render_plot_from_spec(img_spec)
+                if img_path:
+                    diagram_count += 1
 
             q_obj = Question(
                 exam_id=exam.id,
@@ -804,14 +986,73 @@ async def generate_exam(
                 "marks": q_obj.marks,
                 "image_path": q_obj.image_path,
                 "image_spec_json": q_obj.image_spec_json,
+                "difficulty": diff_label,
+                "bloom_level": bloom_label,
+                "question_type": qtype_label,
                 "created_at": q_obj.created_at.isoformat() if hasattr(q_obj.created_at, "isoformat") else str(q_obj.created_at)
             }
             saved_questions.append(q_dict)
 
+        # ── Build Transparency Analytics ────────────────────────────────────
+        n_total = len(questions_data)
+        transparency = {
+            "difficulty_distribution": {
+                k: round((v / max(1, n_total)) * 100, 1) for k, v in difficulty_counts.items()
+            },
+            "bloom_coverage": {
+                k: round((v / max(1, n_total)) * 100, 1) for k, v in bloom_counts.items()
+            },
+            "question_type_distribution": {
+                k: round((v / max(1, n_total)) * 100, 1) for k, v in qtype_counts.items()
+            },
+            "total_marks_actual": total_marks_sum,
+            "total_marks_configured": max_marks,
+            "marks_deviation_pct": round(abs(total_marks_sum - max_marks) / max(1, max_marks) * 100, 1),
+            "diagram_count": diagram_count,
+            "questions_generated": n_total,
+            "subject_detected": detected_subj,
+            "faiss_chunks_retrieved": faiss_retrieval_count,
+        }
+
+        # Calculate syllabus coverage if we have unit weights
+        syllabus_coverage_pct = 0.0
+        if per_unit_weights:
+            try:
+                weights = json.loads(per_unit_weights)
+                topics_requested = set(k.lower() for k in weights.keys())
+                topics_covered = set()
+                for q in saved_questions:
+                    q_text_lower = q["text"].lower()
+                    for topic in topics_requested:
+                        if any(word in q_text_lower for word in topic.split()):
+                            topics_covered.add(topic)
+                syllabus_coverage_pct = round(len(topics_covered) / max(1, len(topics_requested)) * 100, 1)
+            except Exception:
+                syllabus_coverage_pct = 0.0
+        transparency["syllabus_coverage_pct"] = syllabus_coverage_pct
+
+        # ── Create Generation Log entry ─────────────────────────────────────
+        gen_log = GenerationLog(
+            exam_id=exam.id,
+            config_snapshot_json=json.dumps(config_snapshot) if config_snapshot else None,
+            transparency_json=json.dumps(transparency),
+            model_used=actual_model_used or "default",
+            tokens_consumed=scaled_max_tokens,
+            generation_duration_ms=gen_duration_ms,
+            faiss_retrieval_count=faiss_retrieval_count,
+            syllabus_coverage_pct=syllabus_coverage_pct,
+        )
+        session.add(gen_log)
+        session.commit()
+        session.refresh(gen_log)
+
     return {
         "status": "success",
         "exam": exam_dict,
-        "questions": saved_questions
+        "questions": saved_questions,
+        "transparency": transparency,
+        "config_snapshot": config_snapshot,
+        "generation_log_id": gen_log.id,
     }
 
 
@@ -1151,3 +1392,168 @@ async def export_exam(
 
     else:
         raise HTTPException(status_code=400, detail=f"Unsupported format '{format}'. Choose 'pdf', 'pptx', 'docx', or 'tex'.")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Trust & Transparency: Blueprint Config CRUD + Generation Log Endpoints
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _serialize_blueprint(bp: BlueprintConfig) -> dict:
+    return {
+        "id": bp.id,
+        "name": bp.name,
+        "exam_profile": bp.exam_profile,
+        "difficulty": json.loads(bp.difficulty_json) if bp.difficulty_json else {},
+        "bloom_levels": json.loads(bp.bloom_levels_json) if bp.bloom_levels_json else [],
+        "question_types": json.loads(bp.question_types_json) if bp.question_types_json else {},
+        "nep_alignment": json.loads(bp.nep_alignment_json) if bp.nep_alignment_json else {},
+        "guardrails": json.loads(bp.guardrails_json) if bp.guardrails_json else {},
+        "llm_model": bp.llm_model,
+        "llm_temperature": bp.llm_temperature,
+        "llm_max_tokens": bp.llm_max_tokens,
+        "llm_top_p": bp.llm_top_p,
+        "max_diagrams": bp.max_diagrams,
+        "time_minutes": bp.time_minutes,
+        "is_default": bp.is_default,
+        "created_at": bp.created_at.isoformat() if hasattr(bp.created_at, "isoformat") else str(bp.created_at),
+        "updated_at": bp.updated_at.isoformat() if hasattr(bp.updated_at, "isoformat") else str(bp.updated_at),
+    }
+
+
+@app.get("/api/blueprint/configs")
+async def list_blueprint_configs():
+    """Returns all saved blueprint configurations."""
+    with Session(engine) as session:
+        configs = session.exec(select(BlueprintConfig).order_by(BlueprintConfig.created_at.desc())).all()
+        return [_serialize_blueprint(c) for c in configs]
+
+
+@app.get("/api/blueprint/config/default")
+async def get_default_blueprint():
+    """Returns the active default blueprint configuration."""
+    with Session(engine) as session:
+        bp = session.exec(select(BlueprintConfig).where(BlueprintConfig.is_default == True)).first()
+        if not bp:
+            bp = session.exec(select(BlueprintConfig)).first()
+        if not bp:
+            raise HTTPException(status_code=404, detail="No blueprint configurations found.")
+        return _serialize_blueprint(bp)
+
+
+@app.get("/api/blueprint/config/{config_id}")
+async def get_blueprint_config(config_id: int):
+    """Returns a specific blueprint configuration by ID."""
+    with Session(engine) as session:
+        bp = session.get(BlueprintConfig, config_id)
+        if not bp:
+            raise HTTPException(status_code=404, detail=f"Blueprint config {config_id} not found.")
+        return _serialize_blueprint(bp)
+
+
+@app.post("/api/blueprint/config")
+async def save_blueprint_config(request: Request):
+    """Create or update a blueprint configuration (JSON body)."""
+    body = await request.json()
+
+    with Session(engine) as session:
+        config_id = body.get("id")
+        if config_id:
+            bp = session.get(BlueprintConfig, config_id)
+            if not bp:
+                raise HTTPException(status_code=404, detail=f"Blueprint config {config_id} not found.")
+        else:
+            bp = BlueprintConfig()
+
+        bp.name = body.get("name", bp.name)
+        bp.exam_profile = body.get("exam_profile", bp.exam_profile)
+        bp.difficulty_json = json.dumps(body["difficulty"]) if "difficulty" in body else bp.difficulty_json
+        bp.bloom_levels_json = json.dumps(body["bloom_levels"]) if "bloom_levels" in body else bp.bloom_levels_json
+        bp.question_types_json = json.dumps(body["question_types"]) if "question_types" in body else bp.question_types_json
+        bp.nep_alignment_json = json.dumps(body["nep_alignment"]) if "nep_alignment" in body else bp.nep_alignment_json
+        bp.guardrails_json = json.dumps(body["guardrails"]) if "guardrails" in body else bp.guardrails_json
+        bp.llm_model = body.get("llm_model", bp.llm_model)
+        bp.llm_temperature = body.get("llm_temperature", bp.llm_temperature)
+        bp.llm_max_tokens = body.get("llm_max_tokens", bp.llm_max_tokens)
+        bp.llm_top_p = body.get("llm_top_p", bp.llm_top_p)
+        bp.max_diagrams = body.get("max_diagrams", bp.max_diagrams)
+        bp.time_minutes = body.get("time_minutes", bp.time_minutes)
+        bp.updated_at = datetime.utcnow()
+
+        if body.get("is_default"):
+            # Un-default all others
+            all_configs = session.exec(select(BlueprintConfig)).all()
+            for c in all_configs:
+                c.is_default = False
+                session.add(c)
+            bp.is_default = True
+
+        session.add(bp)
+        session.commit()
+        session.refresh(bp)
+
+        return {"status": "success", "config": _serialize_blueprint(bp)}
+
+
+@app.delete("/api/blueprint/config/{config_id}")
+async def delete_blueprint_config(config_id: int):
+    """Deletes a blueprint configuration."""
+    with Session(engine) as session:
+        bp = session.get(BlueprintConfig, config_id)
+        if not bp:
+            raise HTTPException(status_code=404, detail=f"Blueprint config {config_id} not found.")
+        session.delete(bp)
+        session.commit()
+        return {"status": "success", "message": f"Blueprint config {config_id} deleted."}
+
+
+@app.get("/api/generation-logs")
+async def list_generation_logs():
+    """Returns all generation audit log entries, most recent first."""
+    with Session(engine) as session:
+        logs = session.exec(select(GenerationLog).order_by(GenerationLog.created_at.desc())).all()
+        result = []
+        for log in logs:
+            entry = {
+                "id": log.id,
+                "exam_id": log.exam_id,
+                "config_snapshot": json.loads(log.config_snapshot_json) if log.config_snapshot_json else None,
+                "transparency": json.loads(log.transparency_json) if log.transparency_json else None,
+                "model_used": log.model_used,
+                "tokens_consumed": log.tokens_consumed,
+                "generation_duration_ms": log.generation_duration_ms,
+                "faiss_retrieval_count": log.faiss_retrieval_count,
+                "syllabus_coverage_pct": log.syllabus_coverage_pct,
+                "created_at": log.created_at.isoformat() if hasattr(log.created_at, "isoformat") else str(log.created_at),
+            }
+            # Attach exam title if available
+            if log.exam_id:
+                exam = session.get(Exam, log.exam_id)
+                entry["exam_title"] = exam.title if exam else "Deleted Exam"
+            result.append(entry)
+        return result
+
+
+@app.get("/api/generation-log/{log_id}")
+async def get_generation_log(log_id: int):
+    """Returns a specific generation log entry with full transparency data."""
+    with Session(engine) as session:
+        log = session.get(GenerationLog, log_id)
+        if not log:
+            raise HTTPException(status_code=404, detail=f"Generation log {log_id} not found.")
+
+        entry = {
+            "id": log.id,
+            "exam_id": log.exam_id,
+            "config_snapshot": json.loads(log.config_snapshot_json) if log.config_snapshot_json else None,
+            "transparency": json.loads(log.transparency_json) if log.transparency_json else None,
+            "model_used": log.model_used,
+            "tokens_consumed": log.tokens_consumed,
+            "generation_duration_ms": log.generation_duration_ms,
+            "faiss_retrieval_count": log.faiss_retrieval_count,
+            "syllabus_coverage_pct": log.syllabus_coverage_pct,
+            "created_at": log.created_at.isoformat() if hasattr(log.created_at, "isoformat") else str(log.created_at),
+        }
+        if log.exam_id:
+            exam = session.get(Exam, log.exam_id)
+            entry["exam_title"] = exam.title if exam else "Deleted Exam"
+        return entry

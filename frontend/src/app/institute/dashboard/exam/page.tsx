@@ -7,7 +7,7 @@ import {
   ExternalLink, ArrowRight, Upload, Sparkles, Image as ImageIcon,
   Edit3, Trash2, ArrowUp, ArrowDown, RefreshCw, AlertCircle,
   FolderOpen, Layers, Presentation, FileCode2, Printer, Plus, X,
-  KeyRound, HelpCircle, Check, Eye
+  KeyRound, HelpCircle, Check, Eye, SlidersHorizontal
 } from "lucide-react";
 import LatexRenderer from "@/components/shared/LatexRenderer";
 import AiEditModal from "@/components/institute/AiEditModal";
@@ -34,7 +34,22 @@ interface QuestionItem {
   marks: number;
   image_path?: string | null;
   image_spec_json?: string | null;
+  difficulty?: string | null;
+  bloom_level?: string | null;
+  question_type?: string | null;
   created_at?: string;
+}
+
+interface BlueprintConfigSummary {
+  id: number;
+  name: string;
+  exam_profile: string;
+  difficulty: { easy: number; medium: number; hard: number };
+  bloom_levels: string[];
+  question_types: Record<string, number>;
+  time_minutes: number;
+  max_diagrams: number;
+  is_default: boolean;
 }
 
 interface ExamItem {
@@ -80,6 +95,11 @@ export default function ExamPage() {
   const [generating, setGenerating] = useState(false);
   const [genStatus, setGenStatus] = useState<string | null>(null);
 
+  // Trust & Transparency: Blueprint Presets and Post-Gen Transparency Analytics
+  const [blueprintConfigs, setBlueprintConfigs] = useState<BlueprintConfigSummary[]>([]);
+  const [selectedBlueprintId, setSelectedBlueprintId] = useState<number | null>(null);
+  const [latestTransparency, setLatestTransparency] = useState<any>(null);
+
   // Workspace / Questions State
   const [currentExam, setCurrentExam] = useState<ExamItem | null>(null);
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
@@ -105,7 +125,24 @@ export default function ExamPage() {
   useEffect(() => {
     fetchContextStats();
     fetchPastExams();
+    fetchBlueprintConfigs();
   }, []);
+
+  // ── API: Load Blueprint Configs from Control Hub ───────────────────────
+  const fetchBlueprintConfigs = async () => {
+    try {
+      const res = await safeFetchJson<BlueprintConfigSummary[]>(`${apiBaseUrl}/api/blueprint/configs`);
+      if (res.ok && res.data && res.data.length > 0) {
+        setBlueprintConfigs(res.data);
+        const def = res.data.find((c) => c.is_default) || res.data[0];
+        if (def && !selectedBlueprintId) {
+          setSelectedBlueprintId(def.id);
+        }
+      }
+    } catch (e) {
+      console.error("Error loading blueprint configs:", e);
+    }
+  };
 
   // ── API: Context Stats ──────────────────────────────────────────────────
   const fetchContextStats = async () => {
@@ -235,6 +272,7 @@ export default function ExamPage() {
       formData.append("include_diagrams", includeDiagrams ? "true" : "false");
       if (overrideModel.trim()) formData.append("model", overrideModel.trim());
       if (overrideApiKey.trim()) formData.append("api_key", overrideApiKey.trim());
+      if (selectedBlueprintId) formData.append("blueprint_config_id", selectedBlueprintId.toString());
 
       const res = await safeFetchJson(`${apiBaseUrl}/api/generate`, {
         method: "POST",
@@ -247,6 +285,9 @@ export default function ExamPage() {
 
       setCurrentExam(res.data.exam);
       setQuestions(res.data.questions || []);
+      if (res.data.transparency) {
+        setLatestTransparency(res.data.transparency);
+      }
       setGenStatus(null);
       setActiveStep(3);
       fetchPastExams();
@@ -755,6 +796,67 @@ export default function ExamPage() {
                 </div>
 
                 <form onSubmit={handleGenerateExam} className="space-y-4">
+                  {/* Blueprint Preset Selector */}
+                  {blueprintConfigs.length > 0 && (
+                    <div className="p-4 bg-slate-900 rounded-2xl text-white space-y-3 shadow-sm border border-slate-800">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <SlidersHorizontal className="w-4 h-4 text-indigo-400" />
+                          <span className="text-xs font-bold uppercase tracking-wider text-slate-200">
+                            No-Code Blueprint Profile
+                          </span>
+                        </div>
+                        <a
+                          href="/institute/dashboard/control-hub"
+                          className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 underline underline-offset-2"
+                        >
+                          Configure in Control Hub ↗
+                        </a>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {blueprintConfigs.map((cfg) => {
+                          const isSel = selectedBlueprintId === cfg.id;
+                          return (
+                            <button
+                              key={cfg.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedBlueprintId(cfg.id);
+                                if (cfg.exam_profile === "jee_advanced") {
+                                  setExamTitle("JEE Advanced Mathematics & Calculus Evaluation");
+                                  setMaxMarks(120);
+                                  setNQuestions(6);
+                                } else if (cfg.exam_profile === "jee_main") {
+                                  setExamTitle("JEE Main Applied Calculus & Analysis Test");
+                                  setMaxMarks(100);
+                                  setNQuestions(5);
+                                } else if (cfg.exam_profile === "competitive") {
+                                  setExamTitle("Competitive Engineering Mathematics Assessment");
+                                  setMaxMarks(100);
+                                  setNQuestions(5);
+                                } else {
+                                  setExamTitle("Advanced Calculus & Differential Equations");
+                                  setMaxMarks(100);
+                                  setNQuestions(4);
+                                }
+                              }}
+                              className={`px-3 py-2 rounded-xl text-left border transition-all ${
+                                isSel
+                                  ? "bg-indigo-600 border-indigo-400 text-white shadow-sm font-bold"
+                                  : "bg-slate-800/80 border-slate-700 text-slate-300 hover:bg-slate-800 text-xs"
+                              }`}
+                            >
+                              <div className="text-xs truncate">{cfg.name}</div>
+                              <div className="text-[10px] opacity-75 mt-0.5">
+                                {cfg.difficulty?.hard ?? 20}% Hard · {cfg.time_minutes}m
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Subject / Title */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
@@ -982,6 +1084,57 @@ export default function ExamPage() {
                 </div>
               </div>
 
+              {/* Post-Generation Transparency Banner */}
+              {latestTransparency && (
+                <div className="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-800">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 pb-3 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-xs font-bold uppercase tracking-wider text-indigo-300">
+                        Applied Blueprint Transparency Audit
+                      </span>
+                    </div>
+                    <a
+                      href="/institute/dashboard/control-hub"
+                      className="text-xs font-bold text-indigo-300 hover:text-white flex items-center gap-1.5 px-3 py-1 bg-indigo-900/60 hover:bg-indigo-900 rounded-lg border border-indigo-700/50 transition-colors w-fit"
+                    >
+                      <SlidersHorizontal className="w-3.5 h-3.5" />
+                      <span>Open Full Audit Trail in Control Hub</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </a>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    <div className="bg-slate-800/80 rounded-xl p-2.5 border border-slate-700/60">
+                      <span className="text-slate-400 block text-[10px] uppercase font-semibold mb-1">Difficulty Distribution</span>
+                      <div className="font-bold text-slate-100 flex items-center gap-1.5">
+                        <span className="text-emerald-400">{latestTransparency.difficulty_distribution?.easy || 0}% Easy</span> ·
+                        <span className="text-amber-400">{latestTransparency.difficulty_distribution?.medium || 0}% Med</span> ·
+                        <span className="text-red-400">{latestTransparency.difficulty_distribution?.hard || 0}% Hard</span>
+                      </div>
+                    </div>
+                    <div className="bg-slate-800/80 rounded-xl p-2.5 border border-slate-700/60">
+                      <span className="text-slate-400 block text-[10px] uppercase font-semibold mb-1">Bloom&apos;s Levels</span>
+                      <div className="font-bold text-slate-100 truncate">
+                        {Object.keys(latestTransparency.bloom_coverage || {}).join(", ") || "Standard"}
+                      </div>
+                    </div>
+                    <div className="bg-slate-800/80 rounded-xl p-2.5 border border-slate-700/60">
+                      <span className="text-slate-400 block text-[10px] uppercase font-semibold mb-1">Diagrams Rendered</span>
+                      <div className="font-bold text-slate-100">
+                        {latestTransparency.diagram_count || 0} Plot(s) · Matplotlib
+                      </div>
+                    </div>
+                    <div className="bg-slate-800/80 rounded-xl p-2.5 border border-slate-700/60">
+                      <span className="text-slate-400 block text-[10px] uppercase font-semibold mb-1">Syllabus Coverage</span>
+                      <div className="font-bold text-emerald-400">
+                        {latestTransparency.syllabus_coverage_pct || 100}% FAISS Aligned
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Questions List or Empty State */}
               {questions.length === 0 ? (
                 <div className="bg-white rounded-2xl border border-dashed border-gray-300 p-12 text-center space-y-3">
@@ -1011,7 +1164,7 @@ export default function ExamPage() {
                       >
                         {/* Question Header */}
                         <div className="px-5 py-3 bg-gray-50/80 border-b border-gray-100 flex items-center justify-between">
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
                             <span className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
                               Q{idx + 1}
                             </span>
@@ -1019,6 +1172,27 @@ export default function ExamPage() {
                             <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
                               {q.marks} Marks
                             </span>
+                            {q.difficulty && (
+                              <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${
+                                q.difficulty.toLowerCase() === "hard"
+                                  ? "bg-red-50 text-red-700 border border-red-200"
+                                  : q.difficulty.toLowerCase() === "medium"
+                                  ? "bg-amber-50 text-amber-700 border border-amber-200"
+                                  : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                              }`}>
+                                {q.difficulty}
+                              </span>
+                            )}
+                            {q.bloom_level && (
+                              <span className="hidden sm:inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                                Bloom: {q.bloom_level}
+                              </span>
+                            )}
+                            {q.question_type && (
+                              <span className="hidden md:inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 uppercase">
+                                {q.question_type}
+                              </span>
+                            )}
                           </div>
 
                           {/* Action Toolbar */}

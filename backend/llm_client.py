@@ -29,7 +29,8 @@ def call_openrouter(
     api_key: Optional[str] = None,
     max_tokens: int = 4000,
     temperature: float = 0.3,
-    timeout: int = 40
+    timeout: int = 40,
+    top_p: Optional[float] = None
 ) -> str:
     """
     Call OpenRouter API with provided messages.
@@ -78,6 +79,8 @@ def call_openrouter(
             "max_tokens": max_tokens,
             "temperature": temperature
         }
+        if top_p is not None:
+            payload["top_p"] = top_p
 
         try:
             response = requests.post(OPENROUTER_BASE_URL, headers=headers, json=payload, timeout=timeout)

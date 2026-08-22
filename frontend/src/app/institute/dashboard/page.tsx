@@ -1,6 +1,7 @@
 import {
   GraduationCap, Users, CheckCircle2, AlertCircle, Clock,
-  TrendingUp, FileText, Cpu, ArrowRight, Database, Zap
+  TrendingUp, FileText, Cpu, ArrowRight, Database, Zap,
+  SlidersHorizontal
 } from "lucide-react";
 import Link from "next/link";
 
@@ -36,18 +37,24 @@ export default function InstituteDashboardHome() {
         <p className="text-indigo-100 text-sm max-w-lg">
           34 student data points are pending verification. 3 exam generation requests are queued.
         </p>
-        <div className="flex gap-3 mt-4">
+        <div className="flex flex-wrap gap-3 mt-4">
           <Link
-            href="/institute/dashboard/students"
-            className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all"
+            href="/institute/dashboard/control-hub"
+            className="flex items-center gap-2 bg-white text-indigo-700 hover:bg-indigo-50 text-sm font-semibold px-4 py-2 rounded-xl transition-all shadow-sm"
           >
-            <CheckCircle2 className="w-4 h-4" /> Review Verifications
+            <SlidersHorizontal className="w-4 h-4 text-indigo-600" /> Control Hub (No-Code Config)
           </Link>
           <Link
             href="/institute/dashboard/exam"
-            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium px-4 py-2 rounded-xl transition-all"
+            className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white text-sm font-medium px-4 py-2 rounded-xl transition-all"
           >
             <Cpu className="w-4 h-4" /> Generate Exam
+          </Link>
+          <Link
+            href="/institute/dashboard/students"
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium px-4 py-2 rounded-xl transition-all"
+          >
+            <CheckCircle2 className="w-4 h-4" /> Verifications
           </Link>
         </div>
       </div>
@@ -108,10 +115,11 @@ export default function InstituteDashboardHome() {
             <h3 className="text-sm font-bold text-gray-900 mb-3">Quick Actions</h3>
             <div className="space-y-2">
               {[
+                { label: "Control Hub (No-Code Blueprint)", href: "/institute/dashboard/control-hub", icon: SlidersHorizontal },
+                { label: "Generate New Exam", href: "/institute/dashboard/exam", icon: Cpu },
+                { label: "Upload Course Document", href: "/institute/dashboard/documents", icon: FileText },
                 { label: "Bulk Import Students", href: "/institute/dashboard/students", icon: GraduationCap },
                 { label: "Add Teacher", href: "/institute/dashboard/teachers", icon: Users },
-                { label: "Upload Course Document", href: "/institute/dashboard/documents", icon: FileText },
-                { label: "Generate New Exam", href: "/institute/dashboard/exam", icon: Cpu },
               ].map(({ label, href, icon: Icon }) => (
                 <Link
                   key={label}

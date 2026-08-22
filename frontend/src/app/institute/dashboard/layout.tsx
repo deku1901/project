@@ -4,7 +4,8 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   LayoutDashboard, Users, GraduationCap, BookOpen, FileText,
-  Cpu, Settings, LogOut, Bell, ChevronRight, Building2, Menu, X
+  Cpu, Settings, LogOut, Bell, ChevronRight, Building2, Menu, X,
+  SlidersHorizontal
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -13,6 +14,7 @@ const NAV_ITEMS = [
   { href: "/institute/dashboard/teachers", icon: Users, label: "Teachers" },
   { href: "/institute/dashboard/documents", icon: FileText, label: "Context Documents" },
   { href: "/institute/dashboard/exam", icon: Cpu, label: "Exam Generation" },
+  { href: "/institute/dashboard/control-hub", icon: SlidersHorizontal, label: "Control Hub" },
   { href: "/institute/dashboard/settings", icon: Settings, label: "Settings" },
 ];
 
