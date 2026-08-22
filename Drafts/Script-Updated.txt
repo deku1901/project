@@ -1,0 +1,210 @@
+Main thing to speak: Written Directly. 
+Instructions/To Do- In Brackets ()
+Imp lines , display - “”
+Research/Tech Exploration - [ ] 
+My thoughts - { } 
+
+ { Here's how I was thinking to start the pitch. Okay. See the platform idea is slowly slowly getting clear.}
+
+the exam generation will be the bridge that bridges between the student side as well as the teacher side the admin side 
+
+ hello judges we know that examination is
+
+some introduction some nice introduction and then
+
+
+ we will see that today in India examinations have three major challenges
+
+ [ legitimacy and transparency or legitimacy and accountability okay second one I have not yet figured out like me I will think what it is and third one the curation and specification of exams
+
+Okay, that will be the flow. Then I will say now curation of exam. Now, of course, the top most issues, exams, right? And we designed a platform so and so which solves this.
+ all three of the issues that's how we will start now 
+
+These three aren't completely different issues. See, we will show them in a Venn diagram. Okay, so we will say that the topmost issues of accountability and legitimacy
+
+That is dependent upon the inner issue which will be the second one and the third issue which is the curation of exam. So we have to start from the curation of exam which is where all of our expertise, this is how I will pitch it, which is where all of our expertise come together. We have our interest in generating.] 
+
+ [ in AI development, in software development and a huge of our personal experiences in the education, our personal experiences of giving and our personal experiences of going through this rigorous education system. We have all those. So we start with the first one which is curation of exam and then we will have that analogy that the exam must be curated for everybody. Today we have the resources ]
+
+{ Okay, I might say like in the first round this was the line that got us the line that was selective was. Today we have all the resources. So all those three things that I discussed in the video.
+
+Resources, } 
+
+ “ We have all those three things right in our front of hands. We just needed we needed to merge them in the most.Proper adequate manner. So that's what we have done ” 
+
+
+
+ {  now the next script I don't know who will take this or the rules of who will speak like this that is not decided so now talking about the }
+
+[ the what can we say yeah now once that part is done we will immediately talk about what the solution is like how exactly we are curating so when we talk about so now we will continue] 
+
+
+{ that curation or the personalization of exams mean that the core competencies. For a student must be same. However, the language.  the presentation which would increase which would increase.
+
+which would like this is what i'm trying to say the} 
+
+ the core structure will be the same the competencies and expectancies will be the same however the way you present it the way the language you use we in india we have so many languages there are lots of language issues like i have seen my friends who are having excellent skills in mathematics but just because the paper was in english they couldn't do it and the problem is yeah it is very easy to say that
+
+just do a translation and works just do a translation and just do a translation it's easy to say it but we in India where like we will have figures 73% of schools are offline in that segment it is extremely hard to actually do it at the ground level because India is developing, still fastly developing, there are rural areas and 
+
+“if we are proposing any changes to the system of examination, we must account for the variability and the differences across all the spectrums of India, right?”
+
+[ We are in a national hackathon, we are representing the Indian education system and India is a word which we use with full of our attention so we must have to account for that now once the language is okay it's just small part okay ]
+
+{ i got over exciting no problem let's keep it down down down okay breathing
+
+Read out. Okay, fine. So what was the point being made? Yeah, I'm thinking about the cross section. Yep Let's go. Let's go. Let's go. Let's go. Yes. Yes. Yes. I'm getting it So the point that I was making was that we needed to account for the language barriers as well}
+
+ So first thing is that for the curation the first thing is language. Okay an important one. Okay language is there. What's next?
+
+next is the presentation everybody has different different way of expressing themselves
+
+
+[  one question like just look like we can show example look at this few questions like we have today the media no one has predicted in I won't ] 
+
+nobody in 19 late night late 20th century predicted that media will go so rocking people had predicted time travel and big machines but nobody thought that media consumption would be still so easy so if we are ever having any digital platform or even if the test is physical if adding we can show researchers that adding just a small visual
+on to the question helps in both directions see it's not just see we are designing a system which is for both students and teachers so we are not going biased that we will make it all easy easy for students or we will make it hard hard for students no basically we have a parameter to adjust the difficulty and levels we will go through that but the core idea here is that
+
+
+
+yeah the core idea here is that adding any visual cue or adding any sort of media be it offline or online is is improvising the system in both directions it is also able to simplify several topics the students get a clear idea of what the question is like supposed to be also it is also in cases where higher questions are expected in
+
+the court in the depart in the domains where we want absolutely filtered talents then also it is helping because you cannot easily bypass it so yeah that will be the idea so this is about creation of exams okay so how do you create an exam so now I will it's now we will explain the model of curation of exams basically each university now in order to go through the ground reality we can show some screenshots we went to over top
+
+we went to all of the education institutes that were within our grasp okay and we act we went there talked with the experts had few sessions with students all of this is published on YouTube all of this is published on all of this is already published on social media so we got this ideas and
+
+Okay, so doing by the analysis of all that research here. We are presenting this system This is the dashboard of the student. Well just the student dashboard admin as well Let's see the admin as well. For example, you are an institute who want to set papers. What do you do? well
+
+All the necessary things are done. Talking about the tech stack, we have used this platform. This is a single platform which is available through website and mobile app and software is already developed. And yeah, so now this platform.
+
+Yeah. So what will be the thing that will be happening in this platform is that the admin dashboard at each university will have their specific accounts where they can add students kind of like a digital portal.
+
+Now we have added a very interesting thing which is add your own ERP as you know many many universities including our own have their already predefined ERP platforms so they can directly fetch in the data from it given certain permissions so that's a easy check for universities. Now what happens is after this is for schools and universities and colleges after you add
+
+that any student you are not just adding that academic details you are adding the learning state i repeat the learning state of the student okay so for example we like in i belong to a regional marathi school so we used to this is from the photo that uh so yeah we used to have this thing uh which used to keep the track of uh
+
+of all the activities that i used to do or even i have some old my uh progress tracks right so all these things people just ignore it people just keep it as a record to show the ancestors i felt that they have immense value because all of these things which are written by my lkg students or so they are so so important all the tips that they have written there right all of that is actually uh
+
+kind is actually reflecting my true values or for any person it is a reflection of true values of course there is uncertainty like how do you confirm if the teacher has written the correct gradings or not but that is beyond the scope of this problem assuming it is done because i feel i think because assuming it is done properly
+
+assuming it is done properly by the schooling or if it is reinforced correctly like this was a long time ago today I know that many schools have much better systems for recording the extra curriculars and they are not just recorded they are digitally tracked like you are also adding the
+
+You are also adding the proofs of certification news articles and so on so it is a right track, right? So the idea is that we fetch all of this data or
+
+in order to get the details of the user details of the student what he has exactly been like as of now the apar id or a student platform just tracks the mere numbers which is not at all reflection of what the student has done right which we all know how it works a student a backbench student has exceptional
+
+knowledge of a technical field and a topper student is just wasting just or a topper student or a student of a so-called rich politician you know what the what's happening right so this cannot lie all of the data here is is there so
+
+The idea is how we will take over it's going to be a challenge like right now the data is in digital format it is in physical format so we have added situations for it where you know you can add in all the details like scan it we have used the best model best fine-tuned models which are performing at a rate
+
+which can perform at less than 400 unbills paired with the open source gemma embedding model which is all running locally so if the question is ever about security then yeah
+
+Yeah, you have it. It is running locally on consumer end phones. So this is about the digitification moment, not about the main portal. Ideally, we assume that most of the data are starting from when the government takes such a portal into practice. All of the data of students' extracurriculars, all of the data about students' activities, what they have done, how much they have done, along with their academics.
+
+is all uploaded here so what happens to it right is it just data being taken and then we are running a db search query absolutely not once all of data all of that data is uploaded it creates a digital
+
+Self or you can call it as a learning state of the user So this is inspired from the project called as far Which is the project by so-and-so company where they are trying to you know? We know large language models are become extremely capable, but the future actually lies and how can we? fine-tune in large language model and
+
+So much so that it actually behaves just actually like it actually has a clear cut understanding of you. Like in China, there are projects which are going around where they are using
+
+using deceased people and giving their memories and trying to see how good it sounds to actually so we are not using it that way we are using it in a way that the same ideas of here we will explain all the technicalities of what we are doing so this will be able to
+
+actually track the state of the user so all of this data is kind of given and is kind of creating an identity of the student okay and as I said it is a state it is not static it's not like you passed your 10th and you are done no you as a user like
+
+approved by your university the reason we are introducing university in between as an intermediary is that then you can add anything i can like go and add that i have met elon musk what's the verification so we are introducing universities which will do the necessary verification and then you can add anything in here like in today's our btech second year we have got an excel so you can connect it to that excel like uh
+
+in universities what happens usually as there is a hierarchy so that one is for the per division there is so for per 5200 student there is actually already a faculty who is tracking all these extracurriculars and they track it in like an excel which is this time so we just link this excel file with our learning state algorithm so what is happening is
+
+all of the things that you have done academic non-academic all the things you are going to do like you are doing plus you are going to do all of that data all of that data is there okay it is there in its most most not most in its best processed format yeah which is to create a state of it so
+
+Now whenever this state so now what's happening with the final goal of it you have created the state it is like creating word embedding of a word like
+
+What if I show you this you will ask me this is the word and you have created a vector embedding of it What the hell is? Even the use of it. Well, it only works if the same vector is Done use on a cosine variable for on a cosine search, right? When the similarity is search and then we pair it with something like transformer architecture, then it works same
+
+Similarly, all of the data that we talked about of a particular student, when it's properly added and when it's properly processed, right? When it's added and properly processed, it creates this data engine. And now, any large, now we are ready. The large language model is getting access to this through the, through the,
+
+to this data by the combination of here you will explain techniques which are more advanced than rag so rag will be a part of it and agentic architecture so what's happening as basically this is the like the highest level of curation because you are curating to
+
+particular state of learner. Okay, you are having exact details about how the background was, how their language was, how their
+
+Watch as well as that is one part like you can see exam generation is in the middle It is also for the student side and also for the admin side So the reason it is also on the admin side is because you have got the curation right you are curating But you also need to know the outcomes you need to know goals. We are having Program outcomes we are having course of objectives course outcomes all that stuff so that stuff comes into the system from the admin side and
+
+okay so once you get this and this once you get both the user side data in order to curate it as well as what the objectives are then an exam is to try okay so objectives can be of timely can be long long term objectives can be short term objectives but once all of all of that is done in this system then this exam generation generates an exam and since it is uh
+
+Okay, what is the output format of the exam? You might ask. Well, if it is digital, if it is digital, then you might know about the open source project, which was called this. So, take the name of the project here. So, which was called this, which is an attempt to make a.
+
+a font which is like generating fonts which are like captchas however since the latest models of can solve captchas this is a project that generates video like visuals from the noise okay which are human readable however they are not AI readable so no matter how you want to cheat if it is in this font just like
+
+GPD 5.6 Sol and Fable did not cross it which most people do not even have access to so there is just no question of cheating because an exam question when it is prepared digitally it's using this to generate the exam now this looks weird yeah yeah I know it it looks it actually looks weird so we did some processing on it which is taking that by just a few percent the
+
+like just a few percent chance that like out of if you gave this to fable like 10 times there is one time or two time chance it might crack it but who here has fable
+
+But not everyone has it right so this much restriction we have paid of course the general in general ideas of detecting camera and running any activity detected suppose I try to cheat the voice and all that as much as possible as much as required from mobile for camera then on Proctoring is used but this was the innovative idea we have used
+
+This was for digital exam generation. This is how after the content of the exam is generated, which is in sync with both the curation of the student as well as the goal objectives of the teacher. Once all that is done, then this exam is generated. Okay, make sense. Now that the exam is generated in its online format, we have made it most accessible.
+
+we can say most fighting and antivirus shielding to any sort of cheating through AI sorry, last language models and now talking about the physical thing this is another innovation that when you generate an exam when the authority is providing it you can provide previous year questions for training right and you can also provide the design layout
+
+of your exam paper so like when i like i have collected a few exam papers from the just do it yeah yeah so this will show the screen with all the papers okay so yeah so now you can see all these papers you can see the generated output uh we have really interesting pipeline in here that all the uh
+
+Now, all the papers are created in word format. Now, the schools like big colleges, they have their own people or somebody give it to somebody else, right? You don't need that anymore.
+
+You don't need that anymore. Basically, this is even available as a standalone idea where you can just upload the photo of the question paper. Right. And this is not just a simple pipeline when, you know, we are commanding like, hey, take this and prepare the content and then do this. No, no, no, not that. Not that.
+
+You know the word file has the data object model the DOL we are exposing that via MCP and then we are using the Adobe fonts API to we are using the font API to try to mature it the font as much as possible then use only strictly that font and download it in PDF and load it so what happens is
+
+when we provide it now this is something that should really happen even if somebody of you has it we can try it so it takes like five to ten minutes but once you give it one exam paper it extracts all the design data from it so that and you can then edit it as well and then now now what's going to happen is any university the
+
+the content is managed right when any university is going to have a separate control over the content which will be in the standard format any suppose a good university has lots of researchers they are not interested in the design they will have correct
+
+access to all the questions they can even do basic actions like suppose some universities in India go through a review process like each question is reviewed multiple times so we are having this kind of thing that you can add reviews on to this question you can add notes on to this question this basic stuff is that this simple stuff that delivers more of a product to universities is added there right okay next
+
+talking about the the student side yes wait a minute yeah no not to just yeah talking about the design side as well there will be team who will be able to you know make changes to it they can change the font and design and then they can say apply and once they say apply it will be applied to all the content papers so the physical generation of exam is handled in this way and the
+
+offline part is handled in this way so this was all about the academic of course uh yeah surely we have added the features like basic things like mail like mail then which groups you are part of right and uh yeah but talking about uh students right when we talk about students i talked about how we can create the learning state of them which is uh the thing right uh
+
+the data that we are providing to the large language components and the state that we are creating we can go into technical details of how that agentic architecture actually works because more is not always better right it's not that if i am adding like thousand pages of my content and all the things i have done in my portfolio into an ai it's going to be the best example that's not always the case so how we have uh
+
+created that exact architecture we can talk about it but the core question but the core last user flow which is remaining which is for students which is this idea that
+
+This was all for our age groups, right? We have segregation. Few things we know digitally but our past was much more physical, right? Sorry, our past was not physical. I mean, our past education was a lot of things were offline schooling and old school techniques. The great thing that I feel is we have also added this feature where you can sync in the details
+
+where you can sync in the details also from your digital footprints we are having left a lot of digital footprints nowadays uh i just don't need not to name the apps and the ways you provide it we have also added connectors to it like as of now our platform has over
+
+this much connectors which are like mcp tools which we have added so these through api and mcp tooling it is added and yes we have used the standard architecture so here give some tips about uh how the you know how the mcp architecture should be like the guardrails for the mcp architecture that here you will provide yeah so this is all our app and uh
+
+At the last this is the system that proposes if you want we can do all sorts of testing which you want to do and I'll be completely honest about So and talking about things I'll be completely honest here that the platform as of now is completely working an end-to-end pipeline is there and End-to-end pipeline is there. No thing is hard-coded. However, one thing
+
+which I would also like to say is since this is an open source project and we paid from our things so some premium APIs we would have some restrictions so other than that anything you want to know from the back end or the functionality the testing the cases I'm free to discuss all that yeah and as of test right now if you want
+
+I have this thing flashing on the screen you can go with that and go there and as I said we are talking about the learning street of it right this is the learning state and all the details of the learning state we can actually export this learning state like probably today a better platform is there or probably today
+
+mythos drops and apparently the anthropic has done something so incredible that it can actually be better than this that's possible so why to restrict our use case because see if we wanted to make it as a project and i would say no don't go to our platform don't leave our platform or if there is business to it uh like uh
+
+right but this is in the intersection of the domains where we are not just working in software domain we are working on the educational system our inspiration actually do from you know this guy who this is what he has done incredible stuff so here I will be talking about
+
+uh here i will be talking about the guy who actually you know managed to find the neat controversy he did some research and that i think like that okay so you know this guy right so
+
+All that is done. These are like the inspirations so That's why we are also provided the option that you can export all of your data It's going to take time like we will mail you the server will mail you and put in your queue and then give you the data But right now if I just bypass it with the password, please do it
+
+I would say, no, don't go to a platform, don't use a platform, or if there is business to, like, right, that this is in the intersection of the domains where we are not just working in software domain, we are working on the educational system. Our inspiration actually drew from, you know, this guy who—this is what he has done, incredible stuff.
+
+So here I will be talking about—here I will be talking about the guy who actually, you know, managed to find the neat controversy. He did some research in that, I think, like that, okay? So you know this guy, right?
+
+So all that is done. These are, like, the inspirations.
+
+So that's why we have also provided the option that you can export all of your data. It's going to take time. Like, we will mail you, the server will mail you, and put in a queue, and then give you the data. But right now, if I just bypass it with a password—please do it. Yeah. If I bypass it with a password, you can see that all the data of it is given, which is, like, the learning state of you.
+
+The raw of it is, like, over a G, over 400 to 500 MB data, which you cannot give as a context to any standard chatbot. But there is a compressed version of it, right? And if you want, we can test the—do the stress test that you want to generate an exam, right? We will have the topic, and, yeah.
+
+Another point about talking exam generation is, when somebody sets the paper—we discussed this with faculties—is what happens is large language models are essentially prediction-based. So they cannot—they are good with abstract reasoning, and so they are getting good at mathematics, but when both tasks are, you know, getting mixed, okay, when both tasks are getting mixed, that's where they hallucinate.
+
+So what we have done is simple constraint-based programming, CP, CP-SAT or something he mentioned. So through that, we are segregating what is logical. Simple things like make sure that all the addition of all the marks is equal to 50 or 100, right? That part versus—that part is, like, completely hard constraint.
+
+Then the idea that curate the language, like difficulties, they sit something in between soft constraint. Like, it is a constraint, it should try to maximize it, however not necessary. And the final part is actually generating the content, which uses large language model.
+
+So you can also see, whenever an exam is prepared, you can, of course, see how much credits and cost is taken by the AI model, large language model, but you can also see how much was the temperature, average temperature, right, imagination it used, the database this is having to—like, universities have already made databases, so it need not to construct everything on its own. It's just constructing the few tweaks in the exam so that its competencies and goals are managed, and then working on it.
+
+Yeah, so that's my pitch.
+
+Hmm?

@@ -1,0 +1,133 @@
+Yes — I think there’s a very natural middle layer between curation and legitimacy/transparency.
+
+I’d frame the three layers as:
+
+1. Exam Curation — “Is this exam right for this student?”
+
+This is your innermost circle.
+
+The problem is misalignment between the student and what they're being asked to do:
+
+Wrong/poor syllabus mapping
+Overwhelming or irrelevant resources
+Difficulty not matched to preparedness
+Poor timing / cognitive load
+One-size-fits-all assessment
+Student's current state not accounted for
+Expectations unclear or disconnected from preparation
+
+Your software directly attacks this.
+
+The key word I'd use is Curation because you're essentially arguing that an exam should be composed intelligently for its context, rather than being a static object.
+
+2. Assessment Integrity — “Is the exam measuring what it claims to measure?”
+
+I think this is your missing middle circle.
+
+Once you've curated the right exam for the student, the next question is:
+
+Can we trust that the result actually represents the student's knowledge, ability, or readiness?
+
+This encompasses things like:
+
+Validity — Does the exam actually measure the intended competency?
+Reliability — Would the result be reasonably consistent?
+Bias & accessibility — Is the result being distorted by factors unrelated to the intended skill?
+Cheating / AI assistance — Is the demonstrated performance actually the student's?
+Question quality — Are questions ambiguous, broken, misleading, or poorly calibrated?
+Difficulty calibration — Is the assessment appropriately challenging?
+Evaluation consistency — Would equivalent answers receive equivalent treatment?
+Feedback loop — Does the exam reveal why someone succeeded or failed?
+
+This is where your statement becomes really powerful:
+
+Curation determines whether we're asking the right question. Integrity determines whether the answer means anything.
+
+And this layer naturally requires software + institutional/policy adoption.
+
+Your product could provide the infrastructure: question provenance, adaptive calibration, assessment analytics, AI-assisted item review, evidence trails, standardized evaluation, etc. But actually making assessment integrity universal requires schools, universities, examination boards, regulators, and policymakers to adopt those standards.
+
+3. Legitimacy & Accountability — “Should we trust the system?”
+
+This is your outermost circle.
+
+Now we're no longer asking whether this particular exam was well designed.
+
+We're asking:
+
+Can society trust the institution and system that creates, administers, and acts upon these exams?
+
+That's where you get:
+
+Transparency
+Accountability
+Governance
+Appeals
+Auditability
+Conflicts of interest
+Policy fairness
+Institutional incentives
+Standard-setting
+Who gets to define "merit"
+How high-stakes decisions are made
+Whether students have recourse when the system fails
+
+And I agree with your instinct: you don't necessarily need to solve this layer directly with software.
+
+Your product can provide the infrastructure and evidence that makes better governance possible, while acknowledging that the ultimate solution is institutional and political.
+
+So the Venn becomes almost a hierarchy
+
+I'd actually visualize it as three concentric circles, rather than a conventional Venn diagram:
+
+OUTER — LEGITIMACY & ACCOUNTABILITY
+Can we trust the system?
+
+↓ depends on
+
+MIDDLE — ASSESSMENT INTEGRITY
+Can we trust the result?
+
+↓ depends on
+
+INNER — EXAM CURATION
+Are we asking the right question?
+
+And then your pitch becomes:
+
+The future of exams isn't just about making exams smarter. It's about rebuilding trust from the inside out.
+
+First: curate the right assessment for the right student.
+Then: establish that the resulting assessment is valid, reliable, and meaningful.
+Finally: use that foundation to enable transparent, accountable examination systems.
+
+That's a very coherent product story because your scope of intervention gets deliberately narrower as you move outward:
+
+Layer	Core question	Nature of solution	Your role
+1. Curation	Is this the right exam for me?	Primarily software	We solve it
+2. Integrity	Does my result actually mean what it says?	Software + standards/policy	We build the infrastructure
+3. Legitimacy	Should I trust the institution/system?	Governance + policy + institutions	We enable & inform it
+One subtle change I'd recommend
+
+I wouldn't call circle 2 simply "Integrity."
+
+For a hackathon pitch, "Assessment Integrity" is stronger because "integrity" can sound like anti-cheating. Your concept is much broader than that.
+
+Other possibilities:
+
+Assessment Integrity ← my favorite
+Assessment Validity
+Assessment Quality
+Assessment Trust
+Measurement Integrity
+Evaluation Integrity
+
+Of these, Assessment Integrity gives you the most room to talk about validity, bias, cheating, calibration, reliability, and consistency without making the layer feel too academic.
+
+And there's a nice conceptual progression:
+
+Curation → Integrity → Legitimacy
+
+Right exam → Meaningful result → Trustworthy system.
+
+That, IMO, is the cleanest backbone for your pitch.
