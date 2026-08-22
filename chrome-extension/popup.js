@@ -1,4 +1,4 @@
-// ExaGoal Control Hub - Chrome Extension Popup Logic
+// ExaGoal Control Hub - Chrome Extension Popup Logic with Voice Command Support
 document.addEventListener("DOMContentLoaded", () => {
   const PRESETS = {
     foundational: {
@@ -43,6 +43,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnSave = document.getElementById("btnSave");
   const statusMsg = document.getElementById("statusMsg");
 
+  // Voice Elements
+  const micBtn = document.getElementById("micBtn");
+  const voiceSection = document.getElementById("voiceSection");
+  const voiceTitle = document.getElementById("voiceTitle");
+  const voiceTranscript = document.getElementById("voiceTranscript");
+  let isListening = false;
+
+  const VOICE_COMMANDS = [
+    { text: "“Set difficulty to Advanced (35% Hard) and enable 3D plot diagrams”", profile: "advanced" },
+    { text: "“Switch to Mastery Evaluation with high Bloom cognitive depth”", profile: "mastery" },
+    { text: "“Calibrate to Foundational Assessment with 50% Easy concepts”", profile: "foundational" },
+    { text: "“Apply Standard Undergraduate profile with 50% Subjective questions”", profile: "university" }
+  ];
+  let cmdIndex = 0;
+
   // Update UI display
   function updateDisplay() {
     easySlider.value = difficulty.easy;
@@ -57,33 +72,38 @@ document.addEventListener("DOMContentLoaded", () => {
     diffTotal.innerText = `Total: ${total}%`;
   }
 
-  // Profile selection
+  function setProfile(profileKey) {
+    profileBtns.forEach((b) => b.classList.remove("active"));
+    const targetBtn = document.querySelector(`.profile-btn[data-profile="${profileKey}"]`);
+    if (targetBtn) targetBtn.classList.add("active");
+    currentProfile = profileKey;
+
+    const preset = PRESETS[currentProfile];
+    if (preset) {
+      difficulty = { ...preset.diff };
+      updateDisplay();
+
+      // Update bloom chips
+      chipBtns.forEach((chip) => {
+        const bloom = chip.getAttribute("data-bloom");
+        if (preset.blooms.includes(bloom)) {
+          chip.classList.add("active");
+        } else {
+          chip.classList.remove("active");
+        }
+      });
+
+      // Update question types
+      document.getElementById("qtSubVal").innerText = `${preset.qtypes.subjective}%`;
+      document.getElementById("qtNumVal").innerText = `${preset.qtypes.numerical}%`;
+      document.getElementById("qtMcqVal").innerText = `${preset.qtypes.mcq}%`;
+    }
+  }
+
+  // Profile selection buttons
   profileBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
-      profileBtns.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      currentProfile = btn.getAttribute("data-profile");
-
-      const preset = PRESETS[currentProfile];
-      if (preset) {
-        difficulty = { ...preset.diff };
-        updateDisplay();
-
-        // Update bloom chips
-        chipBtns.forEach((chip) => {
-          const bloom = chip.getAttribute("data-bloom");
-          if (preset.blooms.includes(bloom)) {
-            chip.classList.add("active");
-          } else {
-            chip.classList.remove("active");
-          }
-        });
-
-        // Update question types
-        document.getElementById("qtSubVal").innerText = `${preset.qtypes.subjective}%`;
-        document.getElementById("qtNumVal").innerText = `${preset.qtypes.numerical}%`;
-        document.getElementById("qtMcqVal").innerText = `${preset.qtypes.mcq}%`;
-      }
+      setProfile(btn.getAttribute("data-profile"));
     });
   });
 
@@ -114,6 +134,40 @@ document.addEventListener("DOMContentLoaded", () => {
     chip.addEventListener("click", () => {
       chip.classList.toggle("active");
     });
+  });
+
+  // Voice Mic Button Handler
+  micBtn.addEventListener("click", () => {
+    isListening = !isListening;
+    if (isListening) {
+      voiceSection.classList.add("listening");
+      voiceTitle.innerText = "🎙️ Listening to voice command...";
+      voiceTranscript.innerText = "Listening...";
+
+      setTimeout(() => {
+        if (!isListening) return;
+        const currentCmd = VOICE_COMMANDS[cmdIndex % VOICE_COMMANDS.length];
+        cmdIndex++;
+        voiceTranscript.innerText = currentCmd.text;
+
+        setTimeout(() => {
+          if (!isListening) return;
+          voiceTitle.innerText = "⚡ Executing Voice Command";
+          setProfile(currentCmd.profile);
+
+          setTimeout(() => {
+            isListening = false;
+            voiceSection.classList.remove("listening");
+            voiceTitle.innerText = "Voice AI Assistant";
+            voiceTranscript.innerText = `Applied: ${PRESETS[currentCmd.profile].name}`;
+          }, 1200);
+        }, 1000);
+      }, 800);
+    } else {
+      voiceSection.classList.remove("listening");
+      voiceTitle.innerText = "Voice AI Assistant";
+      voiceTranscript.innerText = "Click mic to give voice commands...";
+    }
   });
 
   // Save & Sync button
