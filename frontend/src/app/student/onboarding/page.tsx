@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowRight, ArrowLeft, CheckCircle2, User, BookOpen, Upload,
-  Link2, ClipboardList, Github, Linkedin, Code2, Award, Globe,
+  Link2, ClipboardList, GitBranch, Share2, Code2, Award, Globe,
   FileText, Camera, X, BookMarked
 } from "lucide-react";
 
@@ -16,8 +16,8 @@ const STEPS = [
 ];
 
 const CONNECTORS = [
-  { id: "github", label: "GitHub", icon: Github, desc: "Repos, contributions, streak" },
-  { id: "linkedin", label: "LinkedIn", icon: Linkedin, desc: "Profile, endorsements" },
+  { id: "github", label: "GitHub", icon: GitBranch, desc: "Repos, contributions, streak" },
+  { id: "linkedin", label: "LinkedIn", icon: Share2, desc: "Profile, endorsements" },
   { id: "leetcode", label: "LeetCode", icon: Code2, desc: "Problem solving rating" },
   { id: "certifications", label: "Coursera / NPTEL", icon: Award, desc: "Course certificates" },
   { id: "kaggle", label: "Kaggle", icon: Globe, desc: "Datasets, notebooks, rank" },

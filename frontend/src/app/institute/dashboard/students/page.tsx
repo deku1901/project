@@ -3,7 +3,7 @@ import { useState } from "react";
 import {
   Search, Plus, Upload, CheckCircle2, AlertCircle,
   Clock, Filter, Download, Eye, MoreHorizontal,
-  GraduationCap, Trash2, ChevronDown, Toggle
+  GraduationCap, Trash2, ChevronDown
 } from "lucide-react";
 
 type VerifyStatus = "verified" | "pending" | "unverified";

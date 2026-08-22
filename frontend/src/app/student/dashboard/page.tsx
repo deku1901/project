@@ -1,6 +1,7 @@
+"use client";
 import {
   Brain, TrendingUp, BookOpen, Target, ArrowRight,
-  CheckCircle2, Clock, Zap, Award, Github, Linkedin,
+  CheckCircle2, Clock, Zap, Award, GitBranch, Share2,
   Code2, Globe
 } from "lucide-react";
 import Link from "next/link";
@@ -20,8 +21,8 @@ const RECENT = [
 ];
 
 const CONNECTORS = [
-  { id: "github", label: "GitHub", icon: Github, connected: true },
-  { id: "linkedin", label: "LinkedIn", icon: Linkedin, connected: true },
+  { id: "github", label: "GitHub", icon: GitBranch, connected: true },
+  { id: "linkedin", label: "LinkedIn", icon: Share2, connected: true },
   { id: "leetcode", label: "LeetCode", icon: Code2, connected: false },
   { id: "portfolio", label: "Portfolio", icon: Globe, connected: false },
 ];
