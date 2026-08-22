@@ -3,9 +3,30 @@ import os
 import requests
 from typing import List, Dict, Any, Optional
 
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 DEFAULT_OPENROUTER_MODEL = "nvidia/llama-nemotron-rerank-vl-1b-v2:free"
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", DEFAULT_OPENROUTER_MODEL)
+
+def _load_env():
+    global OPENROUTER_API_KEY, OPENROUTER_MODEL
+    if not os.getenv("OPENROUTER_API_KEY"):
+        for env_path in [".env", "backend/.env", "../backend/.env", "../.env"]:
+            if os.path.isfile(env_path):
+                try:
+                    with open(env_path, "r", encoding="utf-8") as f:
+                        for line in f:
+                            line = line.strip()
+                            if line and not line.startswith("#") and "=" in line:
+                                k, v = line.split("=", 1)
+                                k, v = k.strip(), v.strip().strip('"').strip("'")
+                                if not os.environ.get(k):
+                                    os.environ[k] = v
+                except Exception:
+                    pass
+    OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+    OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", DEFAULT_OPENROUTER_MODEL)
+
+_load_env()
 
 # Verified reliable fast generative models on OpenRouter
 FALLBACK_MODELS = [
@@ -33,8 +54,9 @@ def call_openrouter(
     Call OpenRouter API with provided messages.
     Supports model fallbacks if the primary model hits rate limits (429) or provider errors.
     """
-    selected_key = (api_key.strip() if isinstance(api_key, str) and api_key.strip() else (OPENROUTER_API_KEY.strip() if OPENROUTER_API_KEY else ""))
-    raw_model = (model.strip() if isinstance(model, str) and model.strip() else (OPENROUTER_MODEL.strip() if OPENROUTER_MODEL else DEFAULT_OPENROUTER_MODEL))
+    _load_env()
+    selected_key = (api_key.strip() if isinstance(api_key, str) and api_key.strip() else (os.getenv("OPENROUTER_API_KEY", OPENROUTER_API_KEY).strip()))
+    raw_model = (model.strip() if isinstance(model, str) and model.strip() else (os.getenv("OPENROUTER_MODEL", OPENROUTER_MODEL).strip() if os.getenv("OPENROUTER_MODEL") else DEFAULT_OPENROUTER_MODEL))
     primary_model = raw_model if raw_model else DEFAULT_OPENROUTER_MODEL
 
     if not selected_key:
